@@ -15,4 +15,17 @@ public class Player extends Human{
 		System.out.println("");
 	}
 	
+	public void battle(Human human) {
+		if(super.getStrength() > human.getStrength()) {
+			//プレイヤーの勝ち
+			
+		}else if(super.getStrength() < human.getStrength()) {
+			//プレイヤーの負け
+			
+		}else {
+			//引き分け
+			
+		}
+	}
+	
 }

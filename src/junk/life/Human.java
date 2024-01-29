@@ -8,12 +8,11 @@ public abstract class Human{
 		this.name = name;
 	}
 	
-	public void setStrength(int strength) {
-		this.strength = strength;
-	}
+	public void setStrength(int strength) { this.strength = strength; }
+	public int getStrength() { return this.strength; }
 	
 	public String getName() { return this.name; }
-	public int getStrength() { return this.strength; }
+	
 	
 	public abstract void status();
 }
