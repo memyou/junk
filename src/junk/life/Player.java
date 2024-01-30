@@ -1,12 +1,16 @@
 package junk.life;
 
+import junk.field.FieldInfo;
+
 public class Player extends Human{
-	
+	private int whereFieldNum;
 	
 	public Player(String name,int strength) {
 		super(name);
 		super.setStrength(strength);
 	}
+	
+	public void setWhereFieldNum(FieldInfo field) { this.whereFieldNum = field.getFieldNum(); }
 	
 	@Override
 	public void status() {
