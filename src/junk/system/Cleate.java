@@ -3,9 +3,9 @@ package junk.system;
 import junk.field.Field;
 import junk.field.FieldInfo;
 
-
-public class CleateField {
-	public void cleateField() {
+//ゲームに必要なフィールド、人物などの生成用
+public abstract class Cleate {
+	public static Field[][] cleateField() {
 		//フィールドの大本を生成
 		Field[][] field = new FieldInfo[5][5];
 		
@@ -18,6 +18,8 @@ public class CleateField {
 				count++;
 			}
 		}
+		
+		return field;
 	}
 	
 }
