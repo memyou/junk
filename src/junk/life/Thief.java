@@ -2,15 +2,15 @@ package junk.life;
 
 public class Thief extends Human{
 	
-	public Thief(int strength) {
-		super("盗賊",strength);
+	public Thief(int bodyType) {
+		super("盗賊",bodyType);
 	}
 	
 	@Override
 	public void status() {
 		System.out.printf("名前；%S\n",super.getName());
 		//来歴、短いフレーバーテキスト
-		switch(super.getStrength()) {
+		switch(super.getBodyType()) {
 		case 0:
 			//やせ型の盗賊
 			System.out.println("細身の盗賊。");

@@ -2,22 +2,27 @@ package junk.life;
 
 public abstract class Human{
 	private String name;
-	private int strength;
+	private int bodyType;
+	static final String[] BODYTYPE = {"小柄","平均的","大柄"};
 	
-	
-	public Human(String name,int strength) {
+	public Human(String name,int bodyType) {
 		this.name = name;
-		this.strength = strength;
+		this.bodyType = bodyType;
 	}
 	
 	//ステータス表示
 	public abstract void status();
 	
+	@Override
+	public String toString() {
+		return "名前:" + this.name + "(特徴:" + Human.BODYTYPE[this.bodyType - 1]+ ")";
+	}
+
 	//getter,setter
 	public String getName() { return this.name; }
 	public void setName(String name) { this.name = name; }
 	
-	public int getStrength() { return this.strength; }
-	public void setStrength(int strength) { this.strength = strength; }
+	public int getBodyType() { return this.bodyType; }
+	public void setBodyType(int bodyType) { this.bodyType = bodyType; }
 		
 }

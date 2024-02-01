@@ -5,8 +5,8 @@ import junk.field.FieldInfo;
 public class Player extends Human{
 	private int whereFieldNum;
 	
-	public Player(String name,int strength) {
-		super(name,strength);
+	public Player(String name,int bodyType) {
+		super(name,bodyType);
 	}
 	
 	@Override
@@ -17,16 +17,20 @@ public class Player extends Human{
 	}
 	
 	public void battle(Human human) {
-		if(super.getStrength() > human.getStrength()) {
+		if(super.getBodyType() > human.getBodyType()) {
 			//プレイヤーの勝ち
 			
-		}else if(super.getStrength() < human.getStrength()) {
+		}else if(super.getBodyType() < human.getBodyType()) {
 			//プレイヤーの負け
 			
 		}else {
 			//引き分け
 			
 		}
+	}
+	
+	public void run() {
+		
 	}
 	
 	public int getWhereFieldNum() { return this.whereFieldNum; }
