@@ -1,8 +1,8 @@
 package junk.item;
 
 public class Rarity {
-	String rarity;
-	String rarityStatus;
+	private String rarity;
+	private String rarityStatus;
 	
 	static final String[] RARITY = {
 			"Legendary",
@@ -11,7 +11,7 @@ public class Rarity {
 			"Common",
 			"Worthless"
 	};
-	private final String[] RARITYSTATUS = {
+	static final String[] RARITYSTATUS = {
 			"奇跡の",
 			"貴重な",
 			"汚れた",
@@ -24,10 +24,9 @@ public class Rarity {
 		this.rarityStatus = RARITYSTATUS[index];
 	}
 	
-	public String getRarity() {
-		return this.rarity;
-	}
-	public String getRarityStatus() {
-		return this.rarityStatus;
-	}
+	//getter,setter
+	public String getRarity() { return this.rarity; }
+	
+	public String getRarityStatus() { return this.rarityStatus; }
+	
 }

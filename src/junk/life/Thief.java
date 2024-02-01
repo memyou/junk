@@ -3,8 +3,7 @@ package junk.life;
 public class Thief extends Human{
 	
 	public Thief(int strength) {
-		super("盗賊");
-		super.setStrength(strength);
+		super("盗賊",strength);
 	}
 	
 	@Override

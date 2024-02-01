@@ -3,8 +3,7 @@ package junk.life;
 public class Appraiser extends Human{
 	
 	public Appraiser() {
-		super("鑑定士");
-		super.setStrength(3);
+		super("鑑定士",3);
 	}
 	
 	@Override

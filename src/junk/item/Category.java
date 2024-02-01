@@ -4,11 +4,9 @@ public abstract class Category {
 	private String categoryName;
 	
 	//コンストラクタ
-	public Category(String categoryName) {
-		this.categoryName = categoryName;
-	}
+	public Category(String categoryName) { this.categoryName = categoryName; }
 	
-	public String getCategoryName() {
-		return this.categoryName;
-	}
+	//getter,setter
+	public String getCategoryName() { return this.categoryName; }
+	
 }

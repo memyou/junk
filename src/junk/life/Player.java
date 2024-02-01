@@ -6,11 +6,8 @@ public class Player extends Human{
 	private int whereFieldNum;
 	
 	public Player(String name,int strength) {
-		super(name);
-		super.setStrength(strength);
+		super(name,strength);
 	}
-	
-	public void setWhereFieldNum(FieldInfo field) { this.whereFieldNum = field.getFieldNum(); }
 	
 	@Override
 	public void status() {
@@ -31,5 +28,9 @@ public class Player extends Human{
 			
 		}
 	}
+	
+	public int getWhereFieldNum() { return this.whereFieldNum; }
+	public void setWhereFieldNum(FieldInfo field) { this.whereFieldNum = field.getFieldNum(); }
+	
 	
 }
