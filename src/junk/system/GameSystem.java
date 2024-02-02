@@ -2,6 +2,8 @@ package junk.system;
 
 import java.util.Scanner;
 
+import com.google.gson.Gson;
+
 import junk.field.Field;
 import junk.field.FieldInfo;
 import junk.life.Human;
@@ -28,7 +30,7 @@ public abstract class GameSystem {
 	}
 	
 	//プレイヤーの生成
-	static Human cleatePlayer(Scanner scName,Scanner scNum,Player pl){
+	static Human cleatePlayer(Scanner scName,Scanner scNum,Gson gson,String path,Player pl){
 		System.out.println("\nようこそ、労働者。");
 		System.out.println("登録情報を確認します。");
 		System.out.print("廃棄区画のご利用は初めてですか？ 1.はい 2.いいえ >>");
@@ -40,6 +42,7 @@ public abstract class GameSystem {
 			break;
 		case 2:
 			//過去データロード
+			FileSystem.continuePlayer(gson,path,pl);
 			break;
 		default :
 			System.out.println("初めからやり直してください。");
@@ -76,16 +79,7 @@ public abstract class GameSystem {
 		return pl;
 	}
 	
-	//既存プレイヤーの利用
-	static Player continuePlayer(Player pl) {
-		
-		
-		
-		System.out.println("おかえりなさい、労働者");
-		
-		
-		return pl;
-	}
+	
 	
 	
 }

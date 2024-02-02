@@ -2,6 +2,8 @@ package junk.system;
 
 import java.util.Scanner;
 
+import com.google.gson.Gson;
+
 import junk.field.Field;
 import junk.life.Player;
 
@@ -13,10 +15,8 @@ public class JunkAPP {
 		Scanner scName = new Scanner(System.in); //名前用
 		Scanner scNum = new Scanner(System.in); //数字用
 		//ファイルの使用
-		//プレイヤーデータ
-		String path_player = "playerDeta.joson";
-		//アイテムデータ
-		
+		Gson gson = new Gson();
+		String path = "playerDeta.json";
 		
 		//プレイヤー
 		Player pl = null;
@@ -28,7 +28,7 @@ public class JunkAPP {
 		
 		
 		//ゲーム開始
-		GameSystem.cleatePlayer(scName,scNum,pl);
+		GameSystem.cleatePlayer(scName,scNum,gson,path,pl);
 		
 		
 		

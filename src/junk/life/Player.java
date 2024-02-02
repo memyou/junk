@@ -58,6 +58,6 @@ public class Player extends Human{
 	public void setWhereFieldNum(FieldInfo field) { this.whereFieldNum = field.getFieldNum(); }
 	
 	public int getMoney() { return this.money; }
-	public void setMoney(int money) { this.money = money;}
+	public void setMoney(int money) { this.money += money;}
 	
 }
