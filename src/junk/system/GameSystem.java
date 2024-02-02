@@ -8,7 +8,7 @@ import junk.life.Human;
 import junk.life.Player;
 
 //ゲームに必要なフィールド、人物などの生成用
-public abstract class Cleate {
+public abstract class GameSystem {
 	
 	//ゲームフィールドの生成
 	static Field[][] cleateField() {
@@ -77,8 +77,11 @@ public abstract class Cleate {
 	}
 	
 	//既存プレイヤーの利用
-	static Human continuePlayer(Player pl) {
+	static Player continuePlayer(Player pl) {
 		
+		
+		
+		System.out.println("おかえりなさい、労働者");
 		
 		
 		return pl;

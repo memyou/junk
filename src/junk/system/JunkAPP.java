@@ -13,6 +13,9 @@ public class JunkAPP {
 		Scanner scName = new Scanner(System.in); //名前用
 		Scanner scNum = new Scanner(System.in); //数字用
 		//ファイルの使用
+		//プレイヤーデータ
+		String path_player = "playerDeta.joson";
+		//アイテムデータ
 		
 		
 		//プレイヤー
@@ -21,11 +24,11 @@ public class JunkAPP {
 		
 		
 		//フィールドの生成
-		Field[][] field = Cleate.cleateField();
+		Field[][] field = GameSystem.cleateField();
 		
 		
 		//ゲーム開始
-		Cleate.cleatePlayer(scName,scNum,pl);
+		GameSystem.cleatePlayer(scName,scNum,pl);
 		
 		
 		
