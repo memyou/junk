@@ -2,7 +2,7 @@ package junk.event;
 
 import junk.life.Human;
 
-//盗賊強襲イベントの有無
+//対人イベントの有無
 public class EnemyEvent implements Event{
 	private Human enemy;
 	

@@ -12,11 +12,11 @@ public class FieldInfo implements Field{
 	//コンストラクタで位置情報のみセットする
 	public FieldInfo(int fieldNum) { this.fieldNum = fieldNum; }
 	
-	//イベントとアイテムをセット
-	public void setField(Event event,Item item) {
-		this.event = event;
-		this.item = item;
-	}
+//	//イベントとアイテムをセット
+//	public void setField(Event event,Item item) {
+//		this.event = event;
+//		this.item = item;
+//	}
 	@Override
 	public void fieldInfo() {
 		//現在地の保有情報
