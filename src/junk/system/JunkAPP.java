@@ -31,7 +31,11 @@ public class JunkAPP {
 		final int TURN = 5;
 		
 		
+		
 		//ゲームのルール説明
+		GameSystem.useKey();
+		System.out.println("");
+		FileSystem.explanation();
 		
 		//ゲーム開始
 		GameSystem.cleatePlayer(scName,scNum,pl);
@@ -64,5 +68,8 @@ public class JunkAPP {
 		
 		
 	}
+
+	
+	
 
 }

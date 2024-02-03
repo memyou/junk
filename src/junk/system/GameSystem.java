@@ -37,6 +37,19 @@ public abstract class GameSystem {
 		return field;
 	}
 	
+	//盗賊、物乞いイベントの生成
+	public void enemyEvent(Field[][] field) {
+		
+	}
+	
+	
+	
+	
+	//ゲームで利用する操作の説明
+	static void useKey() {
+		System.out.println("※このゲームでは文字、数字入力、エンターキーを使用します。※");
+	}
+	
 	//プレイヤーの生成
 	static Human cleatePlayer(Scanner scName,Scanner scNum,Player pl){
 		int select = 0;
@@ -103,7 +116,7 @@ public abstract class GameSystem {
 	
 	
 	//マップ内の自分の位置とアイテムの有無
-	static void mapStatus(Field field) {
+	static void mapStatus(Field field,Player pl) {
 		
 	}
 	

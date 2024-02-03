@@ -8,12 +8,40 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
 
 import com.google.gson.Gson;
 
 import junk.life.Player;
 
 public class FileSystem {
+	//導入部分の表示
+	static void explanation() {
+		File file = new File("info/explanation.txt");
+//		if(file.exists()) {
+//			System.out.println("ok");
+//		}else {
+//			System.out.println("no");
+//		}
+		
+		String line = null;
+		List<String> list = new ArrayList<String>();
+		try(BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(file),"UTF-8"))){
+			while((line = br.readLine()) != null) {
+				list.add(line);
+			}
+		}catch(IOException e) {
+			;
+		}
+		for(String s : list) {
+			System.out.print(s);
+			new Scanner(System.in).nextLine();
+		}
+		System.out.println("");
+	}
+	
 	//マップ情報の表示
 	
 	
