@@ -1,12 +1,18 @@
 package junk.system;
 
+import java.util.List;
+import java.util.Random;
 import java.util.Scanner;
 
+import junk.event.EnemyEvent;
+import junk.event.Event;
 import junk.field.Field;
 import junk.field.FieldInfo;
 import junk.item.Item;
+import junk.life.Begger;
 import junk.life.Human;
 import junk.life.Player;
+import junk.life.Thief;
 
 //ゲームに必要なフィールド、人物などの生成用
 public abstract class GameSystem {
@@ -14,34 +20,65 @@ public abstract class GameSystem {
 	//ゲームフィールドの生成
 	static Field[][] cleateField() {
 		//フィールドの大本を生成
-		Field[][] field = new FieldInfo[5][5];
+		Field[][] field = new FieldInfo[Field.AREA][Field.AREA];
 		
 		//5*5フィールドインスタンス生成
 		int count = 1; //フィールドの区画No.
-		for(int i = 0;i < field.length;i++) {
-			for(int j = 0;j < field.length;j++) {
+		for(int i = 0;i < Field.AREA;i++) {
+			for(int j = 0;j < Field.AREA;j++) {
 				field[i][j] = new FieldInfo(count);
 				count++;
 			}
 		}
 		
 		//アイテム生成とセット
-		for(int i = 0;i < field.length;i++) {
-			for(int j = 0;j < field.length;j++) {
+		for(int i = 0;i < Field.AREA;i++) {
+			for(int j = 0;j < Field.AREA;j++) {
 				if(field[i][j] instanceof FieldInfo) {
 					FieldInfo fi = (FieldInfo)field[i][j];
 					fi.setItem(new Item());
 				}
 			}
 		}
+		
+		//対人イベントの生成とセット
+		Event enemyEvent = null;
+		Human enemy = null;
+		
+		//イベント生成用乱数
+		int r = (int)Math.random() * 10;
+		
+		for(int i = 0;i < Field.AREA;i++) {
+			for(int j = 0;j < Field.AREA;j++) {
+				if(2 <= r && r >= 7) {
+					//盗賊生成の処理
+					int bodyType = new Random().nextInt(3) + 1;
+					enemy = new Thief(bodyType);
+					enemyEvent = new EnemyEvent(enemy);
+					if(field[i][j] instanceof FieldInfo) {
+						FieldInfo fi = (FieldInfo)field[i][j];
+						fi.setEvent(enemyEvent);
+					}
+				}else if(1 == r) {
+					//物乞い生成の処理
+					enemy = new Begger();
+					enemyEvent = new EnemyEvent(enemy);
+					if(field[i][j] instanceof FieldInfo) {
+						FieldInfo fi = (FieldInfo)field[i][j];
+						fi.setEvent(enemyEvent);
+					}
+				}else {
+					enemyEvent = new EnemyEvent(enemy);
+					if(field[i][j] instanceof FieldInfo) {
+						FieldInfo fi = (FieldInfo)field[i][j];
+						fi.setEvent(enemyEvent);
+					}
+				}
+			}
+		}
+		
 		return field;
 	}
-	
-	//盗賊、物乞いイベントの生成
-	public void enemyEvent(Field[][] field) {
-		
-	}
-	
 	
 	
 	
@@ -51,7 +88,7 @@ public abstract class GameSystem {
 	}
 	
 	//プレイヤーの生成
-	static Human cleatePlayer(Scanner scName,Scanner scNum,Player pl){
+	static Human cleatePlayer(Scanner scName,Scanner scNum,Player pl,List<Item> itemList){
 		int select = 0;
 		System.out.println("\nようこそ、労働者。");
 		System.out.println("登録情報を確認します。");
@@ -66,11 +103,11 @@ public abstract class GameSystem {
 		switch(select){
 		case 1:
 			//新規プレイヤークリエイト
-			newPlayer(scName,scNum,pl);
+			newPlayer(scName,scNum,pl,itemList);
 			break;
 		case 2:
 			//過去データロード
-			FileSystem.continuePlayer(pl);
+			FileSystem.continuePlayer(pl,itemList);
 			break;
 		}
 		
@@ -78,7 +115,7 @@ public abstract class GameSystem {
 	}
 	
 	//新規プレイヤーの作成
-	static Human newPlayer(Scanner scName,Scanner scNum,Player pl) {
+	static Human newPlayer(Scanner scName,Scanner scNum,Player pl,List<Item> itemList) {
 		String name = "";
 		
 		do {
@@ -104,7 +141,7 @@ public abstract class GameSystem {
 		case 1:
 		case 2:
 		case 3:
-			pl = new Player(name,bodyType);
+			pl = new Player(name,bodyType,itemList);
 			System.out.println("\nそれでは許可証を発行します。");
 			System.out.println("\n***労働許可証***");
 			System.out.println(pl);
@@ -116,8 +153,31 @@ public abstract class GameSystem {
 	
 	
 	//マップ内の自分の位置とアイテムの有無
-	static void mapStatus(Field field,Player pl) {
+	static void mapStatus(Field[][] field,Player pl) {
+		System.out.println("\n現在位置を確認します。");
+		String[][] map = new String[Field.AREA][Field.AREA];
 		
+		for(int i = 0;i < Field.AREA;i++) {
+			for(int j = 0;j < Field.AREA;j++) {
+				if(field[i][j] instanceof FieldInfo) {
+					FieldInfo fi = (FieldInfo)field[i][j];
+					if(fi.getItem() == null) {
+						map[i][j] = "□";
+					}else {
+						map[i][j] = "■";
+					}
+					if(pl.getWhereFieldNum() == fi.getFieldNum()) {
+						map[i][j] = "◎";
+					}
+				}
+			}
+		}
+		for(String[] s : map) {
+			for(String t : s) {
+				System.out.print(t);
+			}
+			System.out.println("");
+		}
 	}
 	
 	

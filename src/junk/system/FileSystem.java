@@ -14,12 +14,13 @@ import java.util.Scanner;
 
 import com.google.gson.Gson;
 
+import junk.item.Item;
 import junk.life.Player;
 
 public class FileSystem {
 	//導入部分の表示
 	static void explanation() {
-		File file = new File("info/explanation.txt");
+		File file = new File("data/explanation.txt");
 //		if(file.exists()) {
 //			System.out.println("ok");
 //		}else {
@@ -59,7 +60,7 @@ public class FileSystem {
 	}
 	
 	//プレイヤーデータを読み取り
-	static Player continuePlayer(Player pl) {
+	static Player continuePlayer(Player pl,List<Item> itemList) {
 		Gson gson = new Gson();
 		File file = new File("playerDeta.json");
 		
@@ -70,6 +71,7 @@ public class FileSystem {
 			}catch(IOException e) {
 				;
 			}
+			pl.setItemList(itemList);
 			System.out.println("登録情報を確認します。");
 			System.out.println("\n***労働許可証***");
 			System.out.println(pl);
@@ -85,8 +87,4 @@ public class FileSystem {
 	//アイテム買取一覧
 	
 	
-	//アイテムデータを書き込み
-	
-	
-	//アイテムデータを読み取り
 }

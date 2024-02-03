@@ -1,15 +1,20 @@
 package junk.life;
 
+import java.util.List;
+
 import junk.field.FieldInfo;
+import junk.item.Item;
 
 public class Player extends Human{
 	private int whereFieldNum;
 	private int money;
+	private List<Item> itemList;
 	
 	//新規作成用コンストラクタ
-	public Player(String name,int bodyType) {
+	public Player(String name,int bodyType,List<Item> itemList) {
 		super(name,bodyType);
 		this.money = 0;
+		this.itemList = itemList;
 	}
 	//コンテニュー用コンストラクタ
 	public Player(String name,int bodyType,int money) {
@@ -60,4 +65,6 @@ public class Player extends Human{
 	public int getMoney() { return this.money; }
 	public void setMoney(int money) { this.money += money;}
 	
+	public List<Item> getItemList(){ return this.itemList; }
+	public void setItemList(List<Item> item) { this.itemList = itemList; }
 }

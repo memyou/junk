@@ -12,5 +12,15 @@ public class Appraiser extends Human{
 		//来歴、短いフレーバーテキスト
 		System.out.println("");
 	}
-
+	
+	//鑑定する
+	public void appraisal() {
+		
+	}
+	
+	//売却する
+	public void saleItem(Player pl) {
+		
+	}
+	
 }
