@@ -7,7 +7,7 @@ public class Thief extends Human{
 	}
 	
 	@Override
-	public void status() {
+	public void showStatus() {
 		System.out.printf("名前；%S\n",super.getName());
 		//来歴、短いフレーバーテキスト
 		switch(super.getBodyType()) {

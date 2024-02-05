@@ -30,8 +30,6 @@ public class JunkAPP {
 		//鑑定士の生成（一人）
 		Appraiser appraiser = new Appraiser();
 		
-		//確認用
-		
 		
 		
 		
@@ -53,7 +51,7 @@ public class JunkAPP {
 			if(Player.TURN == pl.getTurn()) {
 				System.out.println("\n活動限界を迎えました。労働者は受付にて退場処理を行ってください。");
 				do {
-					System.out.print("1.鑑定と売却 2.所持金確認 3.労働者情報を保存 4.退場（ゲーム終了） >>");
+					System.out.print("1.鑑定と売却 2.ステータス確認 3.労働者情報を保存 4.退場（ゲーム終了） >>");
 					select = scNum.nextInt();
 					if(0 >= select || select > 5) {
 						System.out.println("選択肢は1～3を指定してください。");
@@ -73,7 +71,7 @@ public class JunkAPP {
 			}else {
 				System.out.println("\n「何をしようか？」");
 				do {
-					System.out.print("1.発掘する 2.先へ進む 3.発掘アイテム確認 4.鑑定と売却 5.所持金確認 6.現在位置確認 7.仕事をやめる >>");
+					System.out.print("1.発掘する 2.先へ進む 3.発掘アイテム確認 4.鑑定と売却 5.ステータス確認 6.現在位置確認 7.仕事をやめる >>");
 					select = scNum.nextInt();
 					if(0 >= select || select > 8) {
 						System.out.println("選択肢は1～6を指定してください");
@@ -98,15 +96,15 @@ public class JunkAPP {
 					//鑑定と売却
 					break;
 				case 5:
-					//所持金
-					pl.haveMoney();
+					//ステータス確認
+					pl.showStatus();
 					break;
 				case 6:
 					//現在位置確認
 					GameSystem.mapStatus(field, pl);
 					break;
 				case 7:
-					//仕事を辞める
+					//仕事をやめる
 					pl.endWork(scNum);
 					break;			
 				}

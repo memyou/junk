@@ -29,8 +29,9 @@ public class Player extends Human{
 	}
 	
 	@Override
-	public void status() {
+	public void showStatus() {
 		System.out.printf("名前；%S\n",super.getName());
+		System.out.println("現在の所持金：" + this.getMoney());
 		//来歴、短いフレーバーテキスト
 		System.out.println("");
 	}
@@ -166,10 +167,6 @@ public class Player extends Human{
 	
 	//鑑定と売却
 	
-	//所持金確認
-	public void haveMoney() {
-		System.out.println("現在の所持金：" + this.getMoney());
-	}
 	
 	//仕事をやめる
 	public void endWork(Scanner scNum) {

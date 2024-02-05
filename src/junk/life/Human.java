@@ -11,7 +11,7 @@ public abstract class Human{
 	}
 	
 	//ステータス表示
-	public abstract void status();
+	public abstract void showStatus();
 	
 	@Override
 	public String toString() {

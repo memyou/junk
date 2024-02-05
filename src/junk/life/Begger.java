@@ -8,7 +8,7 @@ public class Begger extends Human{
 	}
 
 	@Override
-	public void status() {
+	public void showStatus() {
 		
 		
 	}
