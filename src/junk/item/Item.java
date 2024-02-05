@@ -27,7 +27,7 @@ public class Item {
 			System.out.printf("[価格]%d\n",this.price);
 			System.out.printf("[種類]%S\n",this.category.getCategoryName());
 		}else {
-			System.out.printf("[名称]未鑑定の%s",this.category.getCategoryName());
+			System.out.println("[名称]未鑑定のアイテム");
 		}
 		
 	}

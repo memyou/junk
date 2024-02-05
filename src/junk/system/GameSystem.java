@@ -7,7 +7,6 @@ import java.util.Scanner;
 import junk.event.EnemyEvent;
 import junk.event.Event;
 import junk.field.Field;
-import junk.field.FieldInfo;
 import junk.item.Item;
 import junk.life.Begger;
 import junk.life.Human;
@@ -20,13 +19,13 @@ public abstract class GameSystem {
 	//ゲームフィールドの生成
 	static Field[][] cleateField() {
 		//フィールドの大本を生成
-		Field[][] field = new FieldInfo[Field.AREA][Field.AREA];
+		Field[][] field = new Field[Field.AREA][Field.AREA];
 		
 		//5*5フィールドインスタンス生成
 		int count = 1; //フィールドの区画No.
 		for(int i = 0;i < Field.AREA;i++) {
 			for(int j = 0;j < Field.AREA;j++) {
-				field[i][j] = new FieldInfo(count);
+				field[i][j] = new Field(count);
 				count++;
 			}
 		}
@@ -34,8 +33,8 @@ public abstract class GameSystem {
 		//アイテム生成とセット
 		for(int i = 0;i < Field.AREA;i++) {
 			for(int j = 0;j < Field.AREA;j++) {
-				if(field[i][j] instanceof FieldInfo) {
-					FieldInfo fi = (FieldInfo)field[i][j];
+				if(field[i][j] instanceof Field) {
+					Field fi = (Field)field[i][j];
 					fi.setItem(new Item());
 				}
 			}
@@ -55,24 +54,15 @@ public abstract class GameSystem {
 					int bodyType = new Random().nextInt(3) + 1;
 					enemy = new Thief(bodyType);
 					enemyEvent = new EnemyEvent(enemy);
-					if(field[i][j] instanceof FieldInfo) {
-						FieldInfo fi = (FieldInfo)field[i][j];
-						fi.setEvent(enemyEvent);
-					}
+					field[i][j].setEvent(enemyEvent);
 				}else if(1 == r) {
 					//物乞い生成の処理
 					enemy = new Begger();
 					enemyEvent = new EnemyEvent(enemy);
-					if(field[i][j] instanceof FieldInfo) {
-						FieldInfo fi = (FieldInfo)field[i][j];
-						fi.setEvent(enemyEvent);
-					}
+					field[i][j].setEvent(enemyEvent);
 				}else {
 					enemyEvent = new EnemyEvent(enemy);
-					if(field[i][j] instanceof FieldInfo) {
-						FieldInfo fi = (FieldInfo)field[i][j];
-						fi.setEvent(enemyEvent);
-					}
+					field[i][j].setEvent(enemyEvent);
 				}
 			}
 		}
@@ -88,7 +78,7 @@ public abstract class GameSystem {
 	}
 	
 	//プレイヤーの生成
-	static Human cleatePlayer(Scanner scName,Scanner scNum,Player pl,List<Item> itemList){
+	static Player cleatePlayer(Scanner scName,Scanner scNum,Player pl,List<Item> itemList){
 		int select = 0;
 		System.out.println("\nようこそ、労働者。");
 		System.out.println("登録情報を確認します。");
@@ -103,19 +93,21 @@ public abstract class GameSystem {
 		switch(select){
 		case 1:
 			//新規プレイヤークリエイト
-			newPlayer(scName,scNum,pl,itemList);
+			pl = newPlayer(scName,scNum,pl,itemList);
 			break;
 		case 2:
 			//過去データロード
-			FileSystem.continuePlayer(pl,itemList);
+			pl = FileSystem.continuePlayer(pl,itemList);
+			//プレイヤー初期位置
+			int whereFieldNum = 1 + Field.AREA * (Field.AREA - 1);
+			pl.setWhereFieldNum(whereFieldNum);
 			break;
 		}
-		
 		return pl;
 	}
 	
 	//新規プレイヤーの作成
-	static Human newPlayer(Scanner scName,Scanner scNum,Player pl,List<Item> itemList) {
+	static Player newPlayer(Scanner scName,Scanner scNum,Player pl,List<Item> itemList) {
 		String name = "";
 		
 		do {
@@ -146,8 +138,12 @@ public abstract class GameSystem {
 			System.out.println("\n***労働許可証***");
 			System.out.println(pl);
 			System.out.println("\nいってらっしゃいませ。良い労働を。");
+			//プレイヤー初期位置
+			int whereFieldNum = 1 + Field.AREA * (Field.AREA - 1);
+			pl.setWhereFieldNum(whereFieldNum);
 			break;
 		}
+		
 		return pl;
 	}
 	
@@ -159,16 +155,13 @@ public abstract class GameSystem {
 		
 		for(int i = 0;i < Field.AREA;i++) {
 			for(int j = 0;j < Field.AREA;j++) {
-				if(field[i][j] instanceof FieldInfo) {
-					FieldInfo fi = (FieldInfo)field[i][j];
-					if(fi.getItem() == null) {
-						map[i][j] = "□";
-					}else {
-						map[i][j] = "■";
-					}
-					if(pl.getWhereFieldNum() == fi.getFieldNum()) {
-						map[i][j] = "◎";
-					}
+				if(field[i][j].getItem() == null) {
+					map[i][j] = "□";
+				}else {
+					map[i][j] = "■";
+				}
+				if(pl.getWhereFieldNum() == field[i][j].getFieldNum()) {
+					map[i][j] = "◎";
 				}
 			}
 		}
