@@ -7,7 +7,13 @@ import java.util.Scanner;
 import junk.event.EnemyEvent;
 import junk.event.Event;
 import junk.field.Field;
+import junk.item.Accessory;
+import junk.item.Born;
+import junk.item.Category;
 import junk.item.Item;
+import junk.item.Machine;
+import junk.item.Metal;
+import junk.item.Wepon;
 import junk.life.Begger;
 import junk.life.Human;
 import junk.life.Player;
@@ -33,10 +39,9 @@ public abstract class GameSystem {
 		//アイテム生成とセット
 		for(int i = 0;i < Field.AREA;i++) {
 			for(int j = 0;j < Field.AREA;j++) {
-				if(field[i][j] instanceof Field) {
-					Field fi = (Field)field[i][j];
-					fi.setItem(new Item());
-				}
+				Field fi = (Field)field[i][j];
+				fi.setItem(new Item());
+			
 			}
 		}
 		
@@ -173,19 +178,114 @@ public abstract class GameSystem {
 		}
 	}
 	
-	//鑑定時のアイテム生成処理
-	static void appraisalItem(Player pl) {
-		//どのアイテムを生成するか
-		int rand = new Random().nextInt(5);
-		//レアリティ
-		int rarity = (int)Math.random() * 10;
+	//アイテムの名前と価格を設定：全鑑定処理
+	public static void setItemStatus(Player pl,int select) {
+		int list = pl.getAllItemList().size();
+		Item item = null;
 		
-		
-		
+		//全部鑑定した時
+		if(select == 0) {
+			for(int i = 0;i < list;i++) {
+				item = pl.getAllItemList().get(i);
+				if(item.getIdentified() == false) {
+					//アイテムの書き換え
+					settingItem(item);
+				}
+			}
+		}else{ //選択したものだけ鑑定した時
+			item = pl.getAllItemList().get(select);
+			settingItem(item);
+		}
 	}
 	
+	//アイテム名と価格の設定：中身
+	static void settingItem(Item item) {
+		Category category = setItemCategory();
+		int rand = new Random().nextInt(2);
+		
+		if(category instanceof Wepon) {
+			if(rand == 0) {
+				item.identified("葬送の宝剣",5000,category);
+			}else {
+				item.identified("純華の盾",3000,category);
+			}
+		}else if(category instanceof Accessory) {
+			if(rand == 0) {
+				item.identified("第■期■■■王朝■■■■妃記念ネックレス",1500,category);
+			}else {
+				item.identified("ブティック・ともよのドレス",300,category);
+			}
+		}else if(category instanceof Machine) {
+			if(rand == 0) {
+				item.identified("■■社製純正パーツ",560,category);
+			}else {
+				item.identified("ネルグネジ",100,category);
+			}
+		}else if(category instanceof Metal) {
+			if(rand == 0) {
+				item.identified("■■■国金貨",8000,category);
+			}else {
+				item.identified("オルタ鉄塊",7600,category);
+			}
+		}else{
+			if(rand == 0) {
+				item.identified("海竜の骨",9000,category);
+			}else {
+				item.identified("人骨",1,category);
+			}
+		}
+	}
 	
+	//どの種類のアイテムを生成するか
+	static Category setItemCategory() {
+		int randCategory = new Random().nextInt(5);
+		Category category = null;
+		
+		switch(randCategory) {
+		case 0: //武器
+			category = new Wepon();
+			break;
+		case 1: //装飾品
+			category = new Accessory();
+			break;
+		case 2: //機械
+			category = new Machine();
+			break;
+		case 3: //貴金属
+			category = new Metal();
+			break;
+		case 4: //骸
+			category = new Born();
+			break;
+		}
+		return category;
+	}
 	
-	
-	
+	//情報確認、自分のステータス、アイテムの買取価格表、アイテムのフレーバーテキスト
+	static void displayData(Scanner scNum,Player pl,int select) {
+		while(true) {
+			do {
+				System.out.println("『何の情報を確かめようか？』");
+				System.out.print("1.自分のステータス 2.発掘アイテム一覧 3.アイテムの買取価格表 4.アイテムの説明 >>");
+				select = scNum.nextInt();
+				if(0 >= select || select < 5) {
+					System.out.println("選択肢は1～4を入力してください。");
+				}
+			}while(0 >= select || select < 5);
+			
+			switch(select) {
+			case 1:
+				pl.showStatus();
+				break;
+			case 2:
+				pl.haveItem();
+				break;
+			case 3:
+				
+				break;
+			case 4:
+				break;
+			}
+		}
+	}
 }

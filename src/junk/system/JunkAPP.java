@@ -34,7 +34,6 @@ public class JunkAPP {
 		
 		
 		
-		
 		//ゲームのルール説明
 		GameSystem.useKey();
 		System.out.println("");
@@ -49,9 +48,9 @@ public class JunkAPP {
 			System.out.println("\n労働" + pl.getTurn() + "日目");
 			
 			if(Player.TURN == pl.getTurn()) {
-				System.out.println("\n活動限界を迎えました。労働者は受付にて退場処理を行ってください。");
+				System.out.println("\nあなたは活動限界を迎えました。受付にて退場処理を行ってください。");
 				do {
-					System.out.print("1.鑑定と売却 2.ステータス確認 3.労働者情報を保存 4.退場（ゲーム終了） >>");
+					System.out.print("1.鑑定と売却 2.情報確認 3.労働者情報を保存 4.退場（ゲーム終了） >>");
 					select = scNum.nextInt();
 					if(0 >= select || select > 5) {
 						System.out.println("選択肢は1～3を指定してください。");
@@ -60,23 +59,28 @@ public class JunkAPP {
 				
 				switch(select) {
 				case 1://鑑定売却
+					pl.callAppraiser(appraiser,scNum,select);
 					break;
-				case 2://所持金確認
+				case 2://情報確認
+					GameSystem.displayData(scNum,pl,select);
 					break;
 				case 3://データ保存
+					
 					break;
 				case 4://終了
+					System.out.println("お疲れ様でした。またの労働をお待ちしております。");
+					//最終データ表示
 					break;
 				}
 			}else {
 				System.out.println("\n「何をしようか？」");
 				do {
-					System.out.print("1.発掘する 2.先へ進む 3.発掘アイテム確認 4.鑑定と売却 5.ステータス確認 6.現在位置確認 7.仕事をやめる >>");
+					System.out.print("1.発掘する 2.先へ進む 3.鑑定と売却 4.情報確認 5.仕事をやめる >>");
 					select = scNum.nextInt();
-					if(0 >= select || select > 8) {
-						System.out.println("選択肢は1～6を指定してください");
+					if(0 >= select || select > 6) {
+						System.out.println("選択肢は1～5を指定してください");
 					}
-				}while(0 >= select || select > 8) ;
+				}while(0 >= select || select > 6) ;
 				
 				switch(select) {
 				case 1:
@@ -89,21 +93,14 @@ public class JunkAPP {
 					pl.moveOn(scNum,field);
 					break;
 				case 3:
-					//発掘アイテム確認
-					pl.haveItem();
+					//鑑定と売却
+					pl.callAppraiser(appraiser,scNum,select);
 					break;
 				case 4:
-					//鑑定と売却
+					//情報確認
+					GameSystem.displayData(scNum,pl,select);
 					break;
 				case 5:
-					//ステータス確認
-					pl.showStatus();
-					break;
-				case 6:
-					//現在位置確認
-					GameSystem.mapStatus(field, pl);
-					break;
-				case 7:
 					//仕事をやめる
 					pl.endWork(scNum);
 					break;			

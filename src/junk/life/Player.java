@@ -15,14 +15,14 @@ public class Player extends Human{
 	private int whereFieldNum;
 	private int money;
 	private List<Item> allItemList;
-	
+	private int encount;
 	
 	
 	//新規作成用コンストラクタ
-	public Player(String name,int bodyType,List<Item> itemList) {
+	public Player(String name,int bodyType,List<Item> allItemList) {
 		super(name,bodyType);
 		this.money = 0;
-		this.allItemList = itemList;
+		this.allItemList = allItemList;
 	}
 	//コンテニュー用コンストラクタ
 	public Player(String name,int bodyType,int money) {
@@ -34,7 +34,7 @@ public class Player extends Human{
 	public void showStatus() {
 		System.out.printf("名前；%S\n",super.getName());
 		System.out.println("現在の所持金：" + this.getMoney());
-		//来歴、短いフレーバーテキスト
+		//フレーバーテキスト
 		System.out.println("");
 	}
 	
@@ -167,13 +167,57 @@ public class Player extends Human{
 		}
 	}
 	
-	
-	
+	//鑑定士の呼び出し
+	public void callAppraiser(Appraiser appraiser,Scanner scNum,int select) {
+		System.out.println("『\n鑑定士を呼ぼう。』");
+		appraiser.appraisalItem(this,scNum,select);
+	}
+	//鑑定士にアイテムを売る
+	public void saleItem(Appraiser appraiser,Scanner scNum) {
+		int select = 0;
+		Item item = null;
+		Item saleItem = null;
+		int allItem = this.getAllItemList().size();
+		int salePrice = 0;
+		appraiser.saleItem(this);
+		
+		select = scNum.nextInt();
+		do {
+			System.out.printf("0.全ての鑑定済みアイテムを売却する 1～%d.鑑定済みアイテムを個別に売却する",allItem);
+			select = scNum.nextInt();
+			if(0 > select || select > (allItem + 1)) {
+				System.out.printf("選択肢は0～%dを入力してください。");
+			}
+			item = this.getAllItemList().get(select);
+			if(item.getIdentified() == false) {
+				System.out.println("これは未鑑定のアイテムです。売却には鑑定済みのアイテムを選択してください。");
+			}
+		}while(0 > select || select > (allItem + 1));
+		
+		if(select == 0) {
+			System.out.println("「\n全部売ろう。」");
+			for(int i = 0;i < allItem;i++) {
+				item = this.getAllItemList().get(i);
+				if(item.getIdentified() == true) {
+					saleItem = this.getAllItemList().remove(i);
+					salePrice = saleItem.salePrice();
+					this.income(salePrice);
+				}
+			}
+			System.out.println("全ての鑑定済みアイテムを売却しました。");
+			this.haveItem();
+		}else {
+			System.out.println("「一つずつ売ろう。」");
+			saleItem = this.getAllItemList().remove(select);
+			salePrice = saleItem.salePrice();
+			this.income(salePrice);
+		}
+	}
 	
 	//仕事をやめる
 	public void endWork(Scanner scNum) {
 		int select = 0;
-		System.out.println("「発掘作業を一回休もうか？」");
+		System.out.println("「\n発掘作業を一回休もうか？」");
 		do {
 			System.out.print("休みを取ると発掘回数を１消費します。休みますか？ 1.はい 2.いいえ >>");
 			select = scNum.nextInt();
@@ -184,7 +228,7 @@ public class Player extends Human{
 		switch(select) {
 		case 1:
 			this.turn++;
-			System.out.println("発掘作業をしませんでした。１日の残り採掘回数：" + (Player.TURNCOUNT - this.getTurnCount()));
+			System.out.println("\n発掘作業をしませんでした。１日の残り採掘回数：" + (Player.TURNCOUNT - this.getTurnCount()));
 			if(this.getTurn() == Player.TURN && this.getTurnCount() == Player.TURNCOUNT) {
 				System.out.println("「今回の仕事はここまでだ。換金して帰ろう。」");
 				
@@ -194,9 +238,14 @@ public class Player extends Human{
 			System.out.println("「やっぱり作業をしよう。」");
 		}
 	}
+	
+	//相手を観察する
+	public void observation(Human human) {
+		System.out.println("『\n相手を観察してみよう』");
+		human.showStatus();
+	}
+	
 
-	
-	
 	public void battle(Human human) {
 		if(super.getBodyType() > human.getBodyType()) {
 			//プレイヤーの勝ち
@@ -210,15 +259,12 @@ public class Player extends Human{
 		}
 	}
 	
-	public void run(Human human,List<Item> itemList) {
+	public void run(Human human) {
 		if(super.getBodyType() < human.getBodyType()) {
 			//逃げられる
 			
 		}else if(super.getBodyType() > human.getBodyType()) {
 			//逃げられない
-			//対盗賊
-			
-			//対物乞い
 			
 		}else {
 			//確率で逃げられる
@@ -226,7 +272,7 @@ public class Player extends Human{
 		}
 	}
 	
-	public void saleItem(int money) { this.money += money; }
+	public void income(int money) { this.money += money; }
 	
 	//getter,setter
 	public int getTurnCount() { return this.turnCount;}

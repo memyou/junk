@@ -2,6 +2,8 @@ package junk.life;
 
 import java.util.Scanner;
 
+import junk.system.GameSystem;
+
 public class Appraiser extends Human{
 	
 	public Appraiser() {
@@ -10,8 +12,8 @@ public class Appraiser extends Human{
 	
 	@Override
 	public void showStatus() {
-		System.out.printf("名前；%S\n",super.getName());
-		//来歴、短いフレーバーテキスト
+		System.out.printf("名前：%S\n",super.getName());
+		//フレーバーテキスト
 		System.out.println("");
 	}
 	
@@ -31,12 +33,16 @@ public class Appraiser extends Human{
 		
 		switch(select) {
 		case 1: //鑑定
+			appraisalItem(pl,scNum,select);
 			break;
 		case 2: //売却
+			pl.saleItem(this,scNum);
 			break;
 		case 3: //観察
+			pl.observation(this);
 			break;
 		case 4: //襲撃
+			
 			break;
 		}
 		
@@ -45,35 +51,31 @@ public class Appraiser extends Human{
 	}
 	
 	//鑑定する
-	static void appraisalItem(Player pl,Scanner scNum,int select) {
-		if(pl.getAllItemList().size() == 0) {
+	public void appraisalItem(Player pl,Scanner scNum,int select) {
+		int allItem = pl.getAllItemList().size();
+		
+		if(allItem == 0) {
 			System.out.println("『さすがの我々も、現物がなければ鑑定できませんよ。』");
 		}else {
-				System.out.println("\n『鑑定ですね。どのアイテムを鑑定しますか？』");
-				pl.getAllItemList();
+				System.out.println("\n『鑑定サービスをご利用ですね。どのアイテムを鑑定致しますか？』");
+				pl.haveItem();
 				do {
-					System.out.printf("0.全ての未鑑定アイテムを鑑定する 1～.未鑑定アイテムを個別に鑑定する >>");
+					System.out.printf("0.全ての未鑑定アイテムを鑑定する 1～%d.未鑑定アイテムを個別に鑑定する >>",allItem);
 					select = scNum.nextInt();
-					if(0 >= select || select > (pl.getAllItemList().size() + 1)) {
+					if(0 >= select || select > (allItem + 1)) {
 						System.out.println("アイテムは1～%dから選択してください。");
 					}
 					if(pl.getAllItemList().get(select - 1).getIdentified() == true) {
 						System.out.println("『これは鑑定済みですねえ。』");
 					}
-				}while(0 >= pl.getAllItemList().size() || select > (pl.getAllItemList().size() + 1));
-				if(select == 0) {
-					for(int i = 0;i < pl.getAllItemList().size();i++) {
-						if(pl.getAllItemList().get(i).getIdentified() == false) {
-							//
-						}
-					}
-				}
+				}while(0 >= allItem || select > (allItem + 1));
+				GameSystem.setItemStatus(pl,select);
 		}
 	}
 	
-	//売却する
+	//買取
 	public void saleItem(Player pl) {
-		
+		System.out.println("『買取サービスをご利用ですね。どのアイテムをお売りいただけます？』");
 	}
 	
 }

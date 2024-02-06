@@ -10,12 +10,12 @@ public class Item {
 	
 	//コンストラクタ
 	public Item() {
-		boolean identified = false;
+		this.identified = false;
 	}
 	
-	public void identified(String name,Rarity rarity,Category category) {
+	public void identified(String name,int price,Category category) {
 		this.name = name;
-		this.rarity = rarity;
+		this.price = price;
 		this.category = category;
 		this.identified = true;
 	}
@@ -23,14 +23,23 @@ public class Item {
 	//情報を表示する
 	public void displayStatus() {
 		if(this.identified == true) {
-			System.out.printf("[名称]%S  [価値]%d\n",this.name,this.rarity.getRarity());
-			System.out.printf("[価格]%d\n",this.price);
-			System.out.printf("[種類]%S\n",this.category.getCategoryName());
+			System.out.printf("[名称]%S [レアリティ]%d [価格]\n",this.name,this.rarity.getRarity());
 		}else {
 			System.out.println("[名称]未鑑定のアイテム");
 		}
 	}
 	
+	public int salePrice() {
+		int salePrice = (int)(this.price * rarity.salePrice());
+		return salePrice;
+	}
+	
 	//getter.setter
+	public String getName() { return this.name; }
+	
+	public int getPrice() { return this.price; }
+	
+	public Category getCategory() { return this.category; }
+	
 	public boolean getIdentified() { return this.identified; }
 }

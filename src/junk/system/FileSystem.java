@@ -71,7 +71,7 @@ public class FileSystem {
 			}catch(IOException e) {
 				;
 			}
-			pl.setItemList(itemList);
+			pl.setAllItemList(itemList);
 			System.out.println("登録情報を確認します。");
 			System.out.println("\n***労働許可証***");
 			System.out.println(pl);
@@ -84,7 +84,11 @@ public class FileSystem {
 	}
 	
 	
-	//アイテム買取一覧
+	//アイテム買取価格表
 	
+	
+	
+	
+	//アイテムの説明（価格表の名前を使用）
 	
 }
