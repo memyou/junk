@@ -173,7 +173,16 @@ public abstract class GameSystem {
 		}
 	}
 	
-	
+	//鑑定時のアイテム生成処理
+	static void appraisalItem(Player pl) {
+		//どのアイテムを生成するか
+		int rand = new Random().nextInt(5);
+		//レアリティ
+		int rarity = (int)Math.random() * 10;
+		
+		
+		
+	}
 	
 	
 	

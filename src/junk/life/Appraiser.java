@@ -45,14 +45,30 @@ public class Appraiser extends Human{
 	}
 	
 	//鑑定する
-	static void appraisalItem(Player pl,Scanner scNum,int selct) {
-		System.out.println("\n『鑑定ですね。どのアイテムを鑑定しますか？』");
-		pl.getItemList();
-		do {
-			System.out.print("");
-		}while(0 >= pl.getItemList().size());
-		
-		
+	static void appraisalItem(Player pl,Scanner scNum,int select) {
+		if(pl.getAllItemList().size() == 0) {
+			System.out.println("『さすがの我々も、現物がなければ鑑定できませんよ。』");
+		}else {
+				System.out.println("\n『鑑定ですね。どのアイテムを鑑定しますか？』");
+				pl.getAllItemList();
+				do {
+					System.out.printf("0.全ての未鑑定アイテムを鑑定する 1～.未鑑定アイテムを個別に鑑定する >>");
+					select = scNum.nextInt();
+					if(0 >= select || select > (pl.getAllItemList().size() + 1)) {
+						System.out.println("アイテムは1～%dから選択してください。");
+					}
+					if(pl.getAllItemList().get(select - 1).getIdentified() == true) {
+						System.out.println("『これは鑑定済みですねえ。』");
+					}
+				}while(0 >= pl.getAllItemList().size() || select > (pl.getAllItemList().size() + 1));
+				if(select == 0) {
+					for(int i = 0;i < pl.getAllItemList().size();i++) {
+						if(pl.getAllItemList().get(i).getIdentified() == false) {
+							//
+						}
+					}
+				}
+		}
 	}
 	
 	//売却する

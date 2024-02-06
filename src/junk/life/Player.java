@@ -14,13 +14,15 @@ public class Player extends Human{
 
 	private int whereFieldNum;
 	private int money;
-	private List<Item> itemList;
+	private List<Item> allItemList;
+	
+	
 	
 	//新規作成用コンストラクタ
 	public Player(String name,int bodyType,List<Item> itemList) {
 		super(name,bodyType);
 		this.money = 0;
-		this.itemList = itemList;
+		this.allItemList = itemList;
 	}
 	//コンテニュー用コンストラクタ
 	public Player(String name,int bodyType,int money) {
@@ -49,7 +51,7 @@ public class Player extends Human{
 							System.out.print(":");
 							new Scanner(System.in).nextLine();
 						}
-						this.itemList.add(field[i][j].getItem());
+						this.allItemList.add(field[i][j].getItem());
 						field[i][j].setItem(null);
 						this.turnCount++;
 						System.out.println("アイテムを入手しました。本日の残り発掘回数：" + (Player.TURNCOUNT - this.getTurnCount()));
@@ -154,18 +156,18 @@ public class Player extends Human{
 	
 	//アイテム確認
 	public void haveItem() {
-		if(this.itemList.size() == 0) {
+		if(this.allItemList.size() == 0) {
 			System.out.println("「まだ何も発掘していない。」");
 		}else {
 			System.out.println("\n***所持アイテムリスト***");
-			for(int i = 0;i < this.itemList.size();i++) {
+			for(int i = 0;i < this.allItemList.size();i++) {
 				System.out.print((i + 1) + "；");
-				this.itemList.get(i).displayStatus();
+				this.allItemList.get(i).displayStatus();
 			}
 		}
 	}
 	
-	//鑑定と売却
+	
 	
 	
 	//仕事をやめる
@@ -236,6 +238,8 @@ public class Player extends Human{
 	public int getMoney() { return this.money; }
 	public void setMoney(int money) { this.money = money;}
 	
-	public List<Item> getItemList(){ return this.itemList; }
-	public void setItemList(List<Item> itemList) { this.itemList = itemList; }
+	public List<Item> getAllItemList(){ return this.allItemList; }
+	public void setAllItemList(List<Item> allItemList) { this.allItemList = allItemList; }
+	
+	
 }

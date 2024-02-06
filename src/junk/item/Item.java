@@ -29,6 +29,8 @@ public class Item {
 		}else {
 			System.out.println("[名称]未鑑定のアイテム");
 		}
-		
 	}
+	
+	//getter.setter
+	public boolean getIdentified() { return this.identified; }
 }
