@@ -11,6 +11,7 @@ public class Item {
 	//コンストラクタ
 	public Item() {
 		this.identified = false;
+		this.rarity = new Rarity();
 	}
 	
 	public void identified(String name,int price,Category category) {
@@ -23,7 +24,7 @@ public class Item {
 	//情報を表示する
 	public void displayStatus() {
 		if(this.identified == true) {
-			System.out.printf("[名称]%S [レアリティ]%d [価格]\n",this.name,this.rarity.getRarity());
+			System.out.printf("[名称]%S [レアリティ]%s\n",this.name,this.rarity.getRarity());
 		}else {
 			System.out.println("[名称]未鑑定のアイテム");
 		}

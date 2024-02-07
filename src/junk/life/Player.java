@@ -5,17 +5,13 @@ import java.util.Scanner;
 
 import junk.field.Field;
 import junk.item.Item;
+import junk.system.GameSystem;
+import junk.system.Score;
 
 public class Player extends Human{
-	private int turnCount;
-	public static final int TURNCOUNT = 3;
-	private int turn;
-	public static final int TURN = 5;
-
 	private int whereFieldNum;
 	private int money;
 	private List<Item> allItemList;
-	private int encount;
 	
 	
 	//新規作成用コンストラクタ
@@ -32,33 +28,34 @@ public class Player extends Human{
 	
 	@Override
 	public void showStatus() {
-		System.out.printf("名前；%S\n",super.getName());
-		System.out.println("現在の所持金：" + this.getMoney());
+		System.out.printf("名前：%S\n",super.getName());
+		System.out.printf("現在の所持金：%dZ\n" + this.getMoney());
 		//フレーバーテキスト
 		System.out.println("");
 	}
 	
 	//アイテム発掘
-	public void excavateItem(Field[][] field) {
+	public void excavateItem(Field[][] field,Score score) {
 		for(int i = 0;i < Field.AREA;i++) {
 			for(int j = 0;j < Field.AREA;j++) {
 				if(field[i][j].getFieldNum() == this.whereFieldNum) {
 					if(field[i][j].getItem() == null) {
 						System.out.println("「ここにはもう何もないようだ。」");
 					}else {
+						score.allDigItem();
 						System.out.println("\n採掘を開始します。");
 						for(int k = 0;k < 3;k++) {
 							System.out.print(":");
-							new Scanner(System.in).nextLine();
+							GameSystem.pushEnterKey();
 						}
 						this.allItemList.add(field[i][j].getItem());
 						field[i][j].setItem(null);
-						this.turnCount++;
-						System.out.println("アイテムを入手しました。本日の残り発掘回数：" + (Player.TURNCOUNT - this.getTurnCount()));
-						if(this.getTurnCount() == Player.TURNCOUNT) {
-							this.turn++;
-							System.out.println("本日の発掘を終了します。残り活動日数：" + (Player.TURN - this.getTurn()));
-							if(this.getTurn() == Player.TURN) {
+						score.countTurn();
+						System.out.println("アイテムを入手しました。本日の残り発掘回数：" + (Score.MAX_TURN - score.getCoutnTurn()));
+						if(score.getCoutnTurn() == Score.MAX_TURN) {
+							score.countDay();
+							System.out.println("本日の発掘を終了します。残り活動日数：" + (Score.MAX_DAY - score.getCountDay()));
+							if(score.getCountDay() == Score.MAX_DAY) {
 								System.out.println("活動限界日数を迎えました。");
 							}
 						}
@@ -161,25 +158,27 @@ public class Player extends Human{
 		}else {
 			System.out.println("\n***所持アイテムリスト***");
 			for(int i = 0;i < this.allItemList.size();i++) {
-				System.out.print((i + 1) + "；");
+				System.out.print((i + 1) + "：");
 				this.allItemList.get(i).displayStatus();
 			}
 		}
 	}
 	
 	//鑑定士の呼び出し
-	public void callAppraiser(Appraiser appraiser,Scanner scNum,int select) {
-		System.out.println("『\n鑑定士を呼ぼう。』");
-		appraiser.appraisalItem(this,scNum,select);
+	public void callAppraiser(Appraiser appraiser,Scanner scNum,int select,Score score) {
+		score.countCallAp();
+		System.out.println("\n「鑑定士を呼ぼう。」");
+		appraiser.salesTalk(this,scNum,select,score);
 	}
+	
 	//鑑定士にアイテムを売る
-	public void saleItem(Appraiser appraiser,Scanner scNum) {
+	public void saleItem(Appraiser appraiser,Scanner scNum,Score score) {
 		int select = 0;
 		Item item = null;
 		Item saleItem = null;
 		int allItem = this.getAllItemList().size();
 		int salePrice = 0;
-		appraiser.saleItem(this);
+		appraiser.saleItem();
 		
 		select = scNum.nextInt();
 		do {
@@ -195,10 +194,11 @@ public class Player extends Human{
 		}while(0 > select || select > (allItem + 1));
 		
 		if(select == 0) {
-			System.out.println("「\n全部売ろう。」");
+			System.out.println("\n「全部売ろう。」");
 			for(int i = 0;i < allItem;i++) {
 				item = this.getAllItemList().get(i);
 				if(item.getIdentified() == true) {
+					score.saleItem();
 					saleItem = this.getAllItemList().remove(i);
 					salePrice = saleItem.salePrice();
 					this.income(salePrice);
@@ -208,15 +208,15 @@ public class Player extends Human{
 			this.haveItem();
 		}else {
 			System.out.println("「一つずつ売ろう。」");
+			score.saleItem();
 			saleItem = this.getAllItemList().remove(select);
 			salePrice = saleItem.salePrice();
 			this.income(salePrice);
 		}
 	}
 	
-	//仕事をやめる
-	public void endWork(Scanner scNum) {
-		int select = 0;
+	//仕事を休む
+	public void restWork(Scanner scNum,int select,Score score) {
 		System.out.println("「\n発掘作業を一回休もうか？」");
 		do {
 			System.out.print("休みを取ると発掘回数を１消費します。休みますか？ 1.はい 2.いいえ >>");
@@ -227,9 +227,9 @@ public class Player extends Human{
 		}while(0 >= select || select > 3);
 		switch(select) {
 		case 1:
-			this.turn++;
-			System.out.println("\n発掘作業をしませんでした。１日の残り採掘回数：" + (Player.TURNCOUNT - this.getTurnCount()));
-			if(this.getTurn() == Player.TURN && this.getTurnCount() == Player.TURNCOUNT) {
+			score.countTurn();
+			System.out.println("\n発掘作業をしませんでした。１日の残り採掘回数：" + (Score.MAX_TURN - score.getCoutnTurn()));
+			if(score.getCountDay() == Score.MAX_DAY && score.getCoutnTurn() == Score.MAX_TURN) {
 				System.out.println("「今回の仕事はここまでだ。換金して帰ろう。」");
 				
 			}
@@ -239,14 +239,21 @@ public class Player extends Human{
 		}
 	}
 	
+	//仕事を終える
+	public void endWork(Scanner scNum,int select,Score score) {
+		
+		
+		
+	}
+	
 	//相手を観察する
 	public void observation(Human human) {
-		System.out.println("『\n相手を観察してみよう』");
+		System.out.println("\n「相手を観察してみよう。」");
 		human.showStatus();
 	}
 	
-
-	public void battle(Human human) {
+	//戦闘、相手が鑑定士の場合は問答無用で負けかつ全アイテムと所持金の半分を奪われる
+	public void battle(Human human,Score score) {
 		if(super.getBodyType() > human.getBodyType()) {
 			//プレイヤーの勝ち
 			
@@ -259,7 +266,8 @@ public class Player extends Human{
 		}
 	}
 	
-	public void run(Human human) {
+	//敵から逃げる
+	public void run(Human human,Score score) {
 		if(super.getBodyType() < human.getBodyType()) {
 			//逃げられる
 			
@@ -272,12 +280,15 @@ public class Player extends Human{
 		}
 	}
 	
+	//敵を説得する
+	public void persuade() {
+		
+	}
+	
+	//売却して収入を得る
 	public void income(int money) { this.money += money; }
 	
 	//getter,setter
-	public int getTurnCount() { return this.turnCount;}
-	public int getTurn() { return this.turn; }
-	
 	public int getWhereFieldNum() { return this.whereFieldNum; }
 	public void setWhereFieldNum(int whereFieldNum) { this.whereFieldNum = whereFieldNum; }
 	

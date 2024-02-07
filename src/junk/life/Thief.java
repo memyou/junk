@@ -25,5 +25,25 @@ public class Thief extends Human{
 			break;
 		}
 	}
+	
+	//登場セリフ
+	public void encountTxt() {
+		
+	}
+	
+	//盗賊が勝利した時、ランダムで手持ちアイテムを～３個奪われる
+	public void winner(Player pl) {
+		
+	}
+	
+	//盗賊が敗北した時、ランダムで未鑑定アイテムを～３個入手する
+	public void loser(Player pl) {
+		
+	}
+	
+	//盗賊を説得した時
+	public void persuade(Player pl) {
+		
+	}
 
 }

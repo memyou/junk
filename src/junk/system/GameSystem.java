@@ -41,7 +41,6 @@ public abstract class GameSystem {
 			for(int j = 0;j < Field.AREA;j++) {
 				Field fi = (Field)field[i][j];
 				fi.setItem(new Item());
-			
 			}
 		}
 		
@@ -80,6 +79,7 @@ public abstract class GameSystem {
 	//ゲームで利用する操作の説明
 	static void useKey() {
 		System.out.println("※このゲームでは文字、数字入力、エンターキーを使用します。※");
+		System.out.println("※▼が出てきたらエンターキーを打鍵してください。※");
 	}
 	
 	//プレイヤーの生成
@@ -155,7 +155,7 @@ public abstract class GameSystem {
 	
 	//マップ内の自分の位置とアイテムの有無
 	static void mapStatus(Field[][] field,Player pl) {
-		System.out.println("\n現在位置を確認します。");
+		System.out.println("\n[現在位置]");
 		String[][] map = new String[Field.AREA][Field.AREA];
 		
 		for(int i = 0;i < Field.AREA;i++) {
@@ -189,49 +189,49 @@ public abstract class GameSystem {
 				item = pl.getAllItemList().get(i);
 				if(item.getIdentified() == false) {
 					//アイテムの書き換え
-					settingItem(item);
+					settingItem(pl,i);
 				}
 			}
 		}else{ //選択したものだけ鑑定した時
-			item = pl.getAllItemList().get(select);
-			settingItem(item);
+			settingItem(pl,(select - 1));
+			
 		}
 	}
 	
 	//アイテム名と価格の設定：中身
-	static void settingItem(Item item) {
+	static void settingItem(Player pl,int select) {
 		Category category = setItemCategory();
 		int rand = new Random().nextInt(2);
 		
 		if(category instanceof Wepon) {
 			if(rand == 0) {
-				item.identified("葬送の宝剣",5000,category);
+				pl.getAllItemList().get(select).identified("葬送の宝剣",5000,category);
 			}else {
-				item.identified("純華の盾",3000,category);
+				pl.getAllItemList().get(select).identified("純華の盾",3000,category);
 			}
 		}else if(category instanceof Accessory) {
 			if(rand == 0) {
-				item.identified("第■期■■■王朝■■■■妃記念ネックレス",1500,category);
+				pl.getAllItemList().get(select).identified("第■期■■■王朝■■■■妃記念ネックレス",1500,category);
 			}else {
-				item.identified("ブティック・ともよのドレス",300,category);
+				pl.getAllItemList().get(select).identified("ブティック・ともよのドレス",300,category);
 			}
 		}else if(category instanceof Machine) {
 			if(rand == 0) {
-				item.identified("■■社製純正パーツ",560,category);
+				pl.getAllItemList().get(select).identified("■■社製純正パーツ",560,category);
 			}else {
-				item.identified("ネルグネジ",100,category);
+				pl.getAllItemList().get(select).identified("ネルグネジ",100,category);
 			}
 		}else if(category instanceof Metal) {
 			if(rand == 0) {
-				item.identified("■■■国金貨",8000,category);
+				pl.getAllItemList().get(select).identified("■■■国金貨",8000,category);
 			}else {
-				item.identified("オルタ鉄塊",7600,category);
+				pl.getAllItemList().get(select).identified("オルタ鉄塊",7600,category);
 			}
 		}else{
 			if(rand == 0) {
-				item.identified("海竜の骨",9000,category);
+				pl.getAllItemList().get(select).identified("海竜の骨",9000,category);
 			}else {
-				item.identified("人骨",1,category);
+				pl.getAllItemList().get(select).identified("人骨",1,category);
 			}
 		}
 	}
@@ -265,13 +265,13 @@ public abstract class GameSystem {
 	static void displayData(Scanner scNum,Player pl,int select) {
 		while(true) {
 			do {
-				System.out.println("『何の情報を確かめようか？』");
-				System.out.print("1.自分のステータス 2.発掘アイテム一覧 3.アイテムの買取価格表 4.アイテムの説明 >>");
+				System.out.println("\n「何の情報を確かめようか？」");
+				System.out.print("1.自分のステータス 2.発掘アイテム一覧 3.アイテムの買取価格表 4.アイテムの説明 5.戻る >>");
 				select = scNum.nextInt();
-				if(0 >= select || select < 5) {
+				if(0 >= select || select > 6) {
 					System.out.println("選択肢は1～4を入力してください。");
 				}
-			}while(0 >= select || select < 5);
+			}while(0 >= select || select > 6);
 			
 			switch(select) {
 			case 1:
@@ -284,8 +284,78 @@ public abstract class GameSystem {
 				
 				break;
 			case 4:
+				
 				break;
+			case 5:
+				return;
 			}
 		}
+	}
+	
+	//接敵
+	static void encountEnemy(int select,Scanner scNum,Player pl,Score score,Field fieldEvent) {
+		EnemyEvent ee = null;
+		Human enemy = null;
+		
+		score.encountEnemy();
+		
+		//EventがEnemyEventかの調査
+		if(fieldEvent.getEvent() instanceof EnemyEvent) {
+			ee = (EnemyEvent)fieldEvent.getEvent();
+			enemy = ee.getEnemy();
+		}
+		
+		//Eventの中身の敵が誰か調査
+		if(enemy instanceof Thief) {
+			//盗賊登場セリフ
+			enemy = (Thief)ee.getEnemy();
+			
+		}else if(enemy instanceof Begger) {
+			//物乞い登場セリフ
+			enemy = (Begger)ee.getEnemy();
+		}
+		
+		
+		while(true) {
+			do {
+				System.out.printf("\n「%sと遭遇してしまった。どうしよう？」\n",ee.getEnemy().getName());
+				System.out.print("1.戦う 2.逃げる 3.説得する 4.観察する >>");
+				select = scNum.nextInt();
+				if(0 >= select || select > 5) {
+					System.out.println("選択肢は1～4を入力してください。");
+				}
+			}while(0 >= select || select > 5);
+			
+			switch(select) {
+			case 1:
+				pl.battle(enemy,score);
+				break;
+			case 2:
+				pl.run(enemy,score);
+				break;
+			case 3:
+				break;
+			case 4:
+				pl.observation(enemy);
+				break;
+			}
+			
+			
+			
+			
+			
+		}
+		
+		
+		
+		
+		
+		
+	}
+	
+
+	//エンターキーのみの入力用
+	public static void pushEnterKey() {
+		new Scanner(System.in).nextLine();
 	}
 }

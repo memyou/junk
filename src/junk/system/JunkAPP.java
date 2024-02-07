@@ -30,24 +30,26 @@ public class JunkAPP {
 		//鑑定士の生成（一人）
 		Appraiser appraiser = new Appraiser();
 		
-		
+		//カウント用クラス
+		Score score = new Score();
 		
 		
 		
 		//ゲームのルール説明
-		GameSystem.useKey();
-		System.out.println("");
+//		GameSystem.useKey();
+//		System.out.println("");
 		
 		//ゲームの導入部分
-		FileSystem.explanation();
+//		FileSystem.explanation();
 		
 		//ゲーム開始
 		pl = GameSystem.cleatePlayer(scName,scNum,pl,itemList);
+		score.countDay();
 		System.out.println("\n***廃棄区画入口***");
 		while(true) {
-			System.out.println("\n労働" + pl.getTurn() + "日目");
+			System.out.println("\n―労働" + score.getCountDay() + "日目―");
 			
-			if(Player.TURN == pl.getTurn()) {
+			if(Score.MAX_DAY == score.getCountDay()) {
 				System.out.println("\nあなたは活動限界を迎えました。受付にて退場処理を行ってください。");
 				do {
 					System.out.print("1.鑑定と売却 2.情報確認 3.労働者情報を保存 4.退場（ゲーム終了） >>");
@@ -59,7 +61,7 @@ public class JunkAPP {
 				
 				switch(select) {
 				case 1://鑑定売却
-					pl.callAppraiser(appraiser,scNum,select);
+					pl.callAppraiser(appraiser,scNum,select,score);
 					break;
 				case 2://情報確認
 					GameSystem.displayData(scNum,pl,select);
@@ -70,40 +72,71 @@ public class JunkAPP {
 				case 4://終了
 					System.out.println("お疲れ様でした。またの労働をお待ちしております。");
 					//最終データ表示
+					
 					break;
 				}
 			}else {
+				
+				//盗賊、物乞いがいるかどうか
+				for(int i = 0;i < Field.AREA;i++) {
+					for(int j = 0;j < Field.AREA;j++) {
+						if(field[i][j].getFieldNum() == pl.getWhereFieldNum()) {
+							//いたら
+							if(field[i][j].getEvent() != null) {
+								Field fieldEvent = field[i][j];
+								GameSystem.encountEnemy(select,scNum,pl,score,fieldEvent);
+								
+								//イベント終了
+								fieldEvent.setEvent(null);
+							}
+						}
+					}
+				}
+				
+				
+				
+				
+				
+				
+				
+				
+				
 				System.out.println("\n「何をしようか？」");
 				do {
-					System.out.print("1.発掘する 2.先へ進む 3.鑑定と売却 4.情報確認 5.仕事をやめる >>");
+					System.out.print("1.発掘する 2.先へ進む 3.鑑定と売却 4.情報確認 5.仕事を休む 6.退場（ゲーム終了） >>");
 					select = scNum.nextInt();
-					if(0 >= select || select > 6) {
-						System.out.println("選択肢は1～5を指定してください");
+					if(0 >= select || select > 7) {
+						System.out.println("選択肢は1～6を指定してください");
 					}
-				}while(0 >= select || select > 6) ;
+				}while(0 >= select || select > 7) ;
 				
 				switch(select) {
 				case 1:
 					//発掘する
-					pl.excavateItem(field);
+					pl.excavateItem(field,score);
 					break;
 				case 2:
 					//先へ進む
-					GameSystem.mapStatus(field, pl);
+					GameSystem.mapStatus(field,pl);
 					pl.moveOn(scNum,field);
+					GameSystem.mapStatus(field,pl);
 					break;
 				case 3:
 					//鑑定と売却
-					pl.callAppraiser(appraiser,scNum,select);
+					pl.callAppraiser(appraiser,scNum,select,score);
 					break;
 				case 4:
 					//情報確認
 					GameSystem.displayData(scNum,pl,select);
 					break;
 				case 5:
-					//仕事をやめる
-					pl.endWork(scNum);
-					break;			
+					//仕事を休む
+					pl.restWork(scNum,select,score);
+					break;
+				case 6:
+					//退場処理
+					pl.endWork(scNum,select,score);
+					break;
 				}
 			}	
 			

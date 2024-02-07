@@ -25,15 +25,15 @@ public class Rarity {
 	public Rarity() {
 		//レアリティをランダム生成
 		int randRarity = new Random().nextInt(100) + 1;
-		int index;
+		int index = 0;
 		
-		if(81 <= randRarity || randRarity <=100) {
+		if(81 <= randRarity && randRarity <=100) {
 			index = 4;
-		}else if(46 <= randRarity || randRarity <= 80) {
+		}else if(46 <= randRarity && randRarity <= 80) {
 			index = 3;
-		}else if(16 <= randRarity || randRarity <= 45) {
+		}else if(16 <= randRarity && randRarity <= 45) {
 			index = 2;
-		}else if(6 <= randRarity || randRarity <= 15) {
+		}else if(6 <= randRarity && randRarity <= 15) {
 			index = 1;
 		}else {
 			index = 0;;
