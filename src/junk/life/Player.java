@@ -8,7 +8,7 @@ import junk.item.Item;
 import junk.system.GameSystem;
 import junk.system.Score;
 
-public class Player extends Human{
+public class Player extends Worker{
 	private int whereFieldNum;
 	private int money;
 	private List<Item> allItemList;
@@ -34,6 +34,19 @@ public class Player extends Human{
 		System.out.println("");
 	}
 	
+	@Override
+	public Human investigation(Human human) {
+		Player player = null;
+		if(human instanceof Player) {
+			player = (Player)human;
+			return player;
+		}else {
+			return player;
+		}
+	}
+	
+	
+	
 	//アイテム発掘
 	public void excavateItem(Field[][] field,Score score) {
 		for(int i = 0;i < Field.AREA;i++) {
@@ -45,8 +58,7 @@ public class Player extends Human{
 						score.allDigItem();
 						System.out.println("\n採掘を開始します。");
 						for(int k = 0;k < 3;k++) {
-							System.out.print(":");
-							GameSystem.pushEnterKey();
+							GameSystem.elapsed();
 						}
 						this.allItemList.add(field[i][j].getItem());
 						field[i][j].setItem(null);
@@ -151,7 +163,7 @@ public class Player extends Human{
 		}	
 	}
 	
-	//アイテム確認
+	//所持全アイテム確認
 	public void haveItem() {
 		if(this.allItemList.size() == 0) {
 			System.out.println("「まだ何も発掘していない。」");
@@ -168,53 +180,20 @@ public class Player extends Human{
 	public void callAppraiser(Appraiser appraiser,Scanner scNum,int select,Score score) {
 		score.countCallAp();
 		System.out.println("\n「鑑定士を呼ぼう。」");
-		appraiser.salesTalk(this,scNum,select,score);
+		GameSystem.appraisal(this,appraiser,scNum,select,score);
 	}
 	
 	//鑑定士にアイテムを売る
 	public void saleItem(Appraiser appraiser,Scanner scNum,Score score) {
-		int select = 0;
-		Item item = null;
-		Item saleItem = null;
-		int allItem = this.getAllItemList().size();
-		int salePrice = 0;
-		appraiser.saleItem();
+		System.out.println("\n「アイテムを売ろう。」");
 		
-		select = scNum.nextInt();
-		do {
-			System.out.printf("0.全ての鑑定済みアイテムを売却する 1～%d.鑑定済みアイテムを個別に売却する",allItem);
-			select = scNum.nextInt();
-			if(0 > select || select > (allItem + 1)) {
-				System.out.printf("選択肢は0～%dを入力してください。");
-			}
-			if(select > 1) {
-				item = this.getAllItemList().get((select - 1));
-				if(item.getIdentified() == false) {
-					System.out.println("これは未鑑定のアイテムです。売却には鑑定済みのアイテムを選択してください。");
-				}
-			}
-			
-		}while(0 > select || select > (allItem + 1));
-		
-		if(select == 0) {
-			System.out.println("\n「全部売ろう。」");
-			for(int i = 0;i < allItem;i++) {
-				item = this.getAllItemList().get(i);
-				if(item.getIdentified() == true) {
-					score.saleItem();
-					saleItem = this.getAllItemList().remove(i);
-					salePrice = saleItem.salePrice();
-					this.income(salePrice);
-				}
-			}
-			System.out.println("全ての鑑定済みアイテムを売却しました。");
-			this.haveItem();
+		if(this.getAllItemList().size() == 0) {
+			//所持アイテム0なら
+			System.out.println("「……と思ったけど何も持っていなかった。」");
+			return;
 		}else {
-			System.out.println("「一つずつ売ろう。」");
-			score.saleItem();
-			saleItem = this.getAllItemList().remove((select - 1));
-			salePrice = saleItem.salePrice();
-			this.income(salePrice);
+			//1以上アイテムを所持していたら
+			GameSystem.saleItem(this,appraiser,scNum,score);
 		}
 	}
 	
@@ -239,6 +218,7 @@ public class Player extends Human{
 			break;
 		case 2:
 			System.out.println("「やっぱり作業をしよう。」");
+			break;
 		}
 	}
 	
@@ -255,43 +235,51 @@ public class Player extends Human{
 		human.showStatus();
 	}
 	
-	//戦闘、相手が鑑定士の場合は問答無用で負けかつ全アイテムと所持金の半分を奪われる
-	public void battle(Human human,Score score) {
-		if(super.getBodyType() > human.getBodyType()) {
-			//プレイヤーの勝ち
-			
-		}else if(super.getBodyType() < human.getBodyType()) {
-			//プレイヤーの負け
-			
-		}else {
-			//引き分け
-			
-		}
-	}
 	
-	//敵から逃げる
-	public void run(Human human,Score score) {
-		if(super.getBodyType() < human.getBodyType()) {
-			//逃げられる
-			
-		}else if(super.getBodyType() > human.getBodyType()) {
-			//逃げられない
-			
-		}else {
-			//確率で逃げられる
-			
-		}
-	}
+	
+	
 	
 	//敵を説得する
 	public void persuade(Human human) {
 		
+	}
+	
+	//プレイヤー勝利
+	@Override
+	public void winner() {
 		
+	}
+	
+	//プレイヤー敗北
+	@Override
+	public void loser(Human human) {
+		//インスタンス調査
+		Appraiser appraiser = (Appraiser)human.investigation(human);
+		Thief thief = (Thief)human.investigation(human);
 		
-		
-		
-		
-		
+		if(appraiser != null) {
+			//鑑定士に敵対した時
+			System.out.println("「ラジアーパと敵対するんじゃなかった……。何なんだ、あの強さは。」");
+		}else if(thief != null){
+			//盗賊に敵対した時
+			if(this.getAllItemList().size() == 0) {
+			System.out.println("「せっかく採掘したアイテムが全部奪われてしまった……。」");
+			}else {
+				System.out.println("「酷い目にあった……でもアイテムを全部奪われなくて良かった。」");
+			}
+		}
+	}
+	
+	//引き分け
+	@Override
+	public void draw() {
+		System.out.println("「何とかやり過ごすことが出来た。」");
+	}
+	
+	//逃走
+	@Override
+	public void run() {
+		System.out.println("「よし、無事離れることが出来た。」");
 	}
 	
 	//売却して収入を得る
@@ -306,6 +294,8 @@ public class Player extends Human{
 	
 	public List<Item> getAllItemList(){ return this.allItemList; }
 	public void setAllItemList(List<Item> allItemList) { this.allItemList = allItemList; }
+	
+	
 	
 	
 }

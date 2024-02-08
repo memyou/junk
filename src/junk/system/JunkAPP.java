@@ -84,7 +84,7 @@ public class JunkAPP {
 							//いたら
 							if(field[i][j].getEvent() != null) {
 								Field fieldEvent = field[i][j];
-								GameSystem.encountEnemy(select,scNum,pl,score,fieldEvent);
+								VsNpcSystem.encountEnemy(select,scNum,pl,score,fieldEvent);
 								
 								//イベント終了
 								fieldEvent.setEvent(null);
@@ -92,13 +92,6 @@ public class JunkAPP {
 						}
 					}
 				}
-				
-				
-				
-				
-				
-				
-				
 				
 				
 				System.out.println("\n「何をしようか？」");

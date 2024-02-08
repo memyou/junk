@@ -17,6 +17,8 @@ public abstract class Human{
 	public String toString() {
 		return "名前:" + this.name + "(特徴:" + Human.BODYTYPE[this.bodyType - 1]+ ")";
 	}
+	
+	public abstract Human investigation(Human human);
 
 	//getter,setter
 	public String getName() { return this.name; }

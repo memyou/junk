@@ -1,6 +1,6 @@
 package junk.life;
 
-public class Thief extends Human{
+public class Thief extends Worker{
 	
 	public Thief(int bodyType) {
 		super("盗賊",bodyType);
@@ -8,7 +8,7 @@ public class Thief extends Human{
 	
 	@Override
 	public void showStatus() {
-		System.out.printf("名前；%S\n",super.getName());
+		System.out.printf("名前：%S\n",super.getName());
 		//来歴、短いフレーバーテキスト
 		switch(super.getBodyType()) {
 		case 0:
@@ -28,22 +28,50 @@ public class Thief extends Human{
 	
 	//登場セリフ
 	public void encountTxt() {
+		System.out.println("『』");
+	}
+	
+	//盗賊が勝利した時
+	@Override
+	public void winner() {
+		System.out.println("『』");
+	}
+	
+	//盗賊が敗北した時
+	public void loser(Human human) {
+		System.out.println("『』");
+	}
+	
+	//引き分けた時、アイテム変動なし
+	@Override
+	public void draw() {
+		System.out.println("『チッ、今回は仕方ねえ。ずらかるか……。』");
 		
 	}
 	
-	//盗賊が勝利した時、ランダムで手持ちアイテムを～３個奪われる
-	public void winner(Player pl) {
-		
-	}
-	
-	//盗賊が敗北した時、ランダムで未鑑定アイテムを～３個入手する
-	public void loser(Player pl) {
-		
+	@Override
+	public void run() {
+		System.out.println("『あっ、てめえ！　待ちやがれ――！』");
 	}
 	
 	//盗賊を説得した時
-	public void persuade(Player pl) {
+	@Override
+	public void persuade(Human human) {
+		
 		
 	}
 
+	
+	//インスタンスの内容を検査する
+	@Override
+	public Thief investigation(Human human) {
+		Thief thief = null;
+		if(human instanceof Thief) {
+			thief = (Thief)human;
+			return thief;
+		}else {
+			return thief;
+		}
+	}
+	
 }

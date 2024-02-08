@@ -21,6 +21,7 @@ public class Score {
 	private int battleEnemy;
 	private int winBattle;
 	private int loseBattle;
+	private int drawBattle;
 	private int runaway;
 	private int canPersuade;
 	
@@ -42,6 +43,7 @@ public class Score {
 	public void battleEnemy() { this.battleEnemy++; }
 	public void winBattle() { this.winBattle++; }
 	public void loseBattle() { this.loseBattle++; }
+	public void drawBattle() { this.drawBattle++; }
 	public void runaway() { this.runaway++; }
 	public void canPersuade() { this.canPersuade++; }
 	
@@ -61,6 +63,7 @@ public class Score {
 		System.out.printf("戦闘回数（盗賊、物乞い、鑑定士）：%d回\n",this.getBattleEnemy());
 		System.out.printf("戦闘に勝利した回数：%d回\n",this.getWinBattle());
 		System.out.printf("戦闘に敗北した回数：%d回\n",this.getLoseBattle());
+		System.out.printf("戦闘で引き分けた回数：%d回\n",this.getDrawBattle());
 		System.out.printf("敵前逃亡した回数：%d回\n",this.getRunaway());
 		System.out.printf("説得に成功した回数：%d回\n",this.getCanPersuade());
 		System.out.printf("アイテムを発掘した総回数：%d回\n",this.getAllDigItem());
@@ -82,6 +85,7 @@ public class Score {
 	public int getBattleEnemy() { return this.battleEnemy; }
 	public int getWinBattle() { return this.winBattle; }
 	public int getLoseBattle() { return this.loseBattle; }
+	public int getDrawBattle() { return this.drawBattle; }
 	public int getRunaway() { return this.runaway; }
 	public int getCanPersuade() { return this.canPersuade; }
 	

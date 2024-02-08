@@ -4,7 +4,7 @@ public class Begger extends Human{
 	
 	
 	public Begger() {
-		super("物乞い",1);
+		super("物乞い",0);
 	}
 
 	@Override
@@ -13,6 +13,32 @@ public class Begger extends Human{
 		//フレーバーテキスト
 		System.out.println("");
 		
+	}
+	
+	public void run() {
+		System.out.println("『ああ、どうかお慈悲を……お待ちくだされ……』");
+	}
+	
+	//負け確定
+	public void loser() {
+		System.out.println("『』");
+	}
+	
+	//説得された時
+	public void persuade() {
+		System.out.println("『』");
+	}
+	
+	
+	@Override
+	public Begger investigation(Human human) {
+		Begger begger = null;
+		if(human instanceof Begger) {
+			begger = (Begger)human;
+			return begger;
+		}else {
+			return begger;
+		}
 	}
 	
 }

@@ -14,6 +14,7 @@ import junk.item.Item;
 import junk.item.Machine;
 import junk.item.Metal;
 import junk.item.Wepon;
+import junk.life.Appraiser;
 import junk.life.Begger;
 import junk.life.Human;
 import junk.life.Player;
@@ -265,7 +266,7 @@ public abstract class GameSystem {
 	static void displayData(Scanner scNum,Player pl,int select) {
 		while(true) {
 			do {
-				System.out.println("\n「何の情報を確かめようか？」");
+				System.out.println("\n何の情報を確かめますか？");
 				System.out.print("1.自分のステータス 2.発掘アイテム一覧 3.アイテムの買取価格表 4.アイテムの説明 5.戻る >>");
 				select = scNum.nextInt();
 				if(0 >= select || select > 6) {
@@ -292,72 +293,132 @@ public abstract class GameSystem {
 		}
 	}
 	
-	//接敵
-	static void encountEnemy(int select,Scanner scNum,Player pl,Score score,Field fieldEvent) {
-		EnemyEvent ee = null;
-		Human enemy = null;
+	//鑑定と売却
+	public static void appraisal(Player pl,Appraiser appraiser,Scanner scNum,int select,Score score) {
+		//登場時セリフ
+		appraiser.salesTalk();
 		
-		score.encountEnemy();
+		do {
+			System.out.println("\n鑑定士に対して何を行いますか？");
+			System.out.print("1.鑑定 2.売却 3.観察する 4.襲撃する>>");
+			select = scNum.nextInt();
+			if(0 >= select || select > 5) {
+				System.out.println("選択肢は1～4を入力してください。");
+			}
+		}while(0 >= select || select > 5);
 		
-		//EventがEnemyEventかの調査
-		if(fieldEvent.getEvent() instanceof EnemyEvent) {
-			ee = (EnemyEvent)fieldEvent.getEvent();
-			enemy = ee.getEnemy();
+		switch(select) {
+		case 1: //鑑定
+			appraisalItem(pl,scNum,select);
+			break;
+		case 2: //売却
+			pl.saleItem(appraiser,scNum,score);
+			break;
+		case 3: //観察
+			pl.observation(appraiser);
+			break;
+		case 4: //襲撃
+			VsNpcSystem.battle(pl,appraiser,score);
+			break;
 		}
+	}
+	
+	
+	//鑑定する
+	public static void appraisalItem(Player pl,Scanner scNum,int select) {
+		int allItem = pl.getAllItemList().size();
 		
-		//Eventの中身の敵が誰か調査
-		if(enemy instanceof Thief) {
-			//盗賊登場セリフ
-			enemy = (Thief)ee.getEnemy();
-			
-		}else if(enemy instanceof Begger) {
-			//物乞い登場セリフ
-			enemy = (Begger)ee.getEnemy();
-			
-		}
-		
-		
-		while(true) {
-			do {
-				System.out.printf("\n「%sと遭遇してしまった。どうしよう？」\n",ee.getEnemy().getName());
-				System.out.print("1.戦う 2.逃げる 3.説得する 4.観察する >>");
-				select = scNum.nextInt();
-				if(0 >= select || select > 5) {
-					System.out.println("選択肢は1～4を入力してください。");
+		if(allItem == 0) {
+			System.out.println("『さすがの我々も、現物がなければ鑑定できませんよ。』");
+		}else {
+				System.out.println("\n『鑑定サービスをご利用ですね。どのアイテムを鑑定致しますか？』");
+				pl.haveItem();
+				do {
+					System.out.printf("\n0.全ての未鑑定アイテムを鑑定する 1～%d.未鑑定アイテムを個別に鑑定する >>",allItem);
+					select = scNum.nextInt();
+					
+					if(0 > select || select > (allItem + 1)) {
+						System.out.printf("アイテムは1～%dから選択してください。\n",(allItem + 1));
+					}
+					if(select != 0) {
+						if(pl.getAllItemList().get(select - 1).getIdentified() == true) {
+							System.out.println("『おやおや、これは鑑定済みですねえ。』");
+						}
+					}
+				}while(0 > allItem || select > (allItem + 1));
+				GameSystem.setItemStatus(pl,select);
+				if(pl.getAllItemList().get(select - 1).getIdentified() != true) {
+					System.out.println("『それでは鑑定致しましょう。』");
+					for(int i = 0;i < 3;i++) {
+						GameSystem.pushEnterKey();
+					}
+					System.out.println("『これはこれは……はい、鑑定終了でございます。』");
 				}
-			}while(0 >= select || select > 5);
-			
-			switch(select) {
-			case 1:
-				pl.battle(enemy,score);
-				break;
-			case 2:
-				pl.run(enemy,score);
-				break;
-			case 3:
-				pl.persuade(enemy);
-				break;
-			case 4:
-				pl.observation(enemy);
-				break;
+		}
+	}
+	
+	//鑑定士にアイテムを売る
+	public static void saleItem(Player pl,Appraiser appraiser,Scanner scNum,Score score) {
+		int select = 0; //選択肢用
+		Item item = null; //アイテムの鑑定を判定する用
+		Item saleItem = null; //売却アイテムの一時避難用
+		int allItem = pl.getAllItemList().size(); //所持アイテム総数
+		int salePrice = 0; //売却時の実際の金額
+		
+		//鑑定士のセリフ
+		appraiser.saleItem();
+		
+		//売却処理
+		pl.haveItem();
+		do {
+			System.out.printf("0.全ての鑑定済みアイテムを売却する 1～%d.鑑定済みアイテムを個別に売却する",allItem);
+			select = scNum.nextInt();
+			if(0 > select || select > (allItem + 1)) {
+				System.out.printf("選択肢は0～%dを入力してください。");
+			}
+			if(select > 1) {
+				item = pl.getAllItemList().get((select - 1));
+				if(item.getIdentified() == false) {
+					System.out.println("これは未鑑定のアイテムです。売却には鑑定済みのアイテムを選択してください。");
+				}
 			}
 			
-			
-			
-			
-			
+		}while(0 > select || select > (allItem + 1));
+		
+		if(select == 0) {
+			System.out.println("\n全ての鑑定済みアイテムを売却します。");
+			for(int i = 0;i < allItem;i++) {
+				item = pl.getAllItemList().get(i);
+				if(item.getIdentified() == true) {
+					score.saleItem();
+					saleItem = pl.getAllItemList().remove(i);
+					salePrice = saleItem.salePrice();
+					pl.income(salePrice);
+				}
+			}
+			System.out.println("全ての鑑定済みアイテムを売却しました。");
+			pl.haveItem();
+		}else {
+			System.out.println("\n選択したアイテムのみ売却します。");
+			score.saleItem();
+			saleItem = pl.getAllItemList().remove((select - 1));
+			salePrice = saleItem.salePrice();
+			pl.income(salePrice);
 		}
-		
-		
-		
-		
-		
-		
 	}
+	
 	
 
 	//エンターキーのみの入力用
 	public static void pushEnterKey() {
 		new Scanner(System.in).nextLine();
+	}
+	
+	//時間経過表現
+	public static void elapsed() {
+		for(int i = 0;i < 3;i++) {
+			System.out.println("：▼");
+			pushEnterKey();
+		}
 	}
 }
