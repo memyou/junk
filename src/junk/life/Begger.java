@@ -9,8 +9,10 @@ public class Begger extends Human{
 
 	@Override
 	public void showStatus() {
-		
+		System.out.printf("名前：%S\n",super.getName());
+		//フレーバーテキスト
+		System.out.println("");
 		
 	}
-
+	
 }

@@ -187,10 +187,13 @@ public class Player extends Human{
 			if(0 > select || select > (allItem + 1)) {
 				System.out.printf("選択肢は0～%dを入力してください。");
 			}
-			item = this.getAllItemList().get(select);
-			if(item.getIdentified() == false) {
-				System.out.println("これは未鑑定のアイテムです。売却には鑑定済みのアイテムを選択してください。");
+			if(select > 1) {
+				item = this.getAllItemList().get((select - 1));
+				if(item.getIdentified() == false) {
+					System.out.println("これは未鑑定のアイテムです。売却には鑑定済みのアイテムを選択してください。");
+				}
 			}
+			
 		}while(0 > select || select > (allItem + 1));
 		
 		if(select == 0) {
@@ -209,7 +212,7 @@ public class Player extends Human{
 		}else {
 			System.out.println("「一つずつ売ろう。」");
 			score.saleItem();
-			saleItem = this.getAllItemList().remove(select);
+			saleItem = this.getAllItemList().remove((select - 1));
 			salePrice = saleItem.salePrice();
 			this.income(salePrice);
 		}
@@ -281,7 +284,13 @@ public class Player extends Human{
 	}
 	
 	//敵を説得する
-	public void persuade() {
+	public void persuade(Human human) {
+		
+		
+		
+		
+		
+		
 		
 	}
 	

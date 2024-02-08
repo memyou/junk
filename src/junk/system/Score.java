@@ -16,12 +16,13 @@ public class Score {
 	private int countAppraisal;
 	private int battleAp;
 	
-	//接敵回数とバトル回数、勝敗
+	//接敵回数とバトル、勝敗、逃走、説得回数
 	private int encountEnemy;
 	private int battleEnemy;
 	private int winBattle;
 	private int loseBattle;
 	private int runaway;
+	private int canPersuade;
 	
 	//全発掘個数
 	private int allDigItem;
@@ -42,6 +43,7 @@ public class Score {
 	public void winBattle() { this.winBattle++; }
 	public void loseBattle() { this.loseBattle++; }
 	public void runaway() { this.runaway++; }
+	public void canPersuade() { this.canPersuade++; }
 	
 	public void allDigItem() { this.allDigItem++; }
 	
@@ -60,6 +62,7 @@ public class Score {
 		System.out.printf("戦闘に勝利した回数：%d回\n",this.getWinBattle());
 		System.out.printf("戦闘に敗北した回数：%d回\n",this.getLoseBattle());
 		System.out.printf("敵前逃亡した回数：%d回\n",this.getRunaway());
+		System.out.printf("説得に成功した回数：%d回\n",this.getCanPersuade());
 		System.out.printf("アイテムを発掘した総回数：%d回\n",this.getAllDigItem());
 		System.out.printf("アイテムを売却した総個数：%d回\n",this.getSaleItem());
 		
@@ -80,6 +83,7 @@ public class Score {
 	public int getWinBattle() { return this.winBattle; }
 	public int getLoseBattle() { return this.loseBattle; }
 	public int getRunaway() { return this.runaway; }
+	public int getCanPersuade() { return this.canPersuade; }
 	
 	public int getAllDigItem() { return this.allDigItem; }
 	

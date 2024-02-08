@@ -313,6 +313,7 @@ public abstract class GameSystem {
 		}else if(enemy instanceof Begger) {
 			//物乞い登場セリフ
 			enemy = (Begger)ee.getEnemy();
+			
 		}
 		
 		
@@ -334,6 +335,7 @@ public abstract class GameSystem {
 				pl.run(enemy,score);
 				break;
 			case 3:
+				pl.persuade(enemy);
 				break;
 			case 4:
 				pl.observation(enemy);
