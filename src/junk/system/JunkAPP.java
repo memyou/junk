@@ -48,10 +48,9 @@ public class JunkAPP {
 		
 		
 		
-		score.countDay();
 		System.out.println("\n***廃棄区画入口***");
 		while(true) {
-			System.out.println("\n―労働" + score.getCountDay() + "日目―");
+			System.out.println("\n―労働" + (score.getCountDay() + 1) + "日目―");
 			
 			if(Score.MAX_DAY == score.getCountDay()) {
 				System.out.println("\nあなたは活動限界を迎えました。受付にて退場処理を行ってください。");

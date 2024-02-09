@@ -266,7 +266,7 @@ public abstract class GameSystem {
 	
 	//鑑定と売却
 	public static void appraisal(Player pl,Appraiser appraiser,Scanner scNum,int select,Score score) {
-		//登場時セリフ
+		//鑑定士登場時セリフ
 		appraiser.salesTalk();
 		
 		do {
@@ -280,7 +280,7 @@ public abstract class GameSystem {
 		
 		switch(select) {
 		case 1: //鑑定
-			appraisalItem(pl,scNum,select);
+			pl.appraisalItem(scNum,select,appraiser);
 			break;
 		case 2: //売却
 			pl.saleItem(appraiser,scNum,score);
@@ -302,7 +302,7 @@ public abstract class GameSystem {
 		if(allItem == 0) {
 			System.out.println("『さすがの我々も、現物がなければ鑑定できませんよ。』");
 		}else {
-				System.out.println("\n『鑑定サービスをご利用ですね。どのアイテムを鑑定致しますか？』");
+				System.out.println("『どのアイテムを鑑定致しますか？』");
 				pl.haveItem();
 				do {
 					System.out.printf("\n0.全ての未鑑定アイテムを鑑定する 1～%d.未鑑定アイテムを個別に鑑定する >>",allItem);
@@ -317,14 +317,16 @@ public abstract class GameSystem {
 						}
 					}
 				}while(0 > allItem || select > (allItem + 1));
-				GameSystem.setItemStatus(pl,select);
-				if(pl.getAllItemList().get(select - 1).getIdentified() != true) {
-					System.out.println("『それでは鑑定致しましょう。』");
-					for(int i = 0;i < 3;i++) {
-						GameSystem.elapsed();
-					}
-					System.out.println("『これはこれは……はい、鑑定終了でございます。』");
+				
+				System.out.println("\n『それでは鑑定致しましょう。』");
+				if(select == 0) {
+					GameSystem.setItemStatus(pl,select);
+				}else {
+					GameSystem.setItemStatus(pl,select);
 				}
+				GameSystem.elapsed(); //時間経過表現
+				System.out.println("『これはこれは……はい、鑑定終了でございます。』");
+				
 		}
 	}
 	
@@ -336,13 +338,10 @@ public abstract class GameSystem {
 		int allItem = pl.getAllItemList().size(); //所持アイテム総数
 		int salePrice = 0; //売却時の実際の金額
 		
-		//鑑定士のセリフ
-		appraiser.saleItem();
-		
 		//売却処理
 		pl.haveItem();
 		do {
-			System.out.printf("0.全ての鑑定済みアイテムを売却する 1～%d.鑑定済みアイテムを個別に売却する",allItem);
+			System.out.printf("\n0.全ての鑑定済みアイテムを売却する 1～%d.鑑定済みアイテムを個別に売却する",allItem);
 			select = scNum.nextInt();
 			if(0 > select || select > (allItem + 1)) {
 				System.out.printf("選択肢は0～%dを入力してください。");
@@ -374,6 +373,11 @@ public abstract class GameSystem {
 			score.saleItem();
 			saleItem = pl.getAllItemList().remove((select - 1));
 			salePrice = saleItem.salePrice();
+			
+			//売却アイテム表示
+			saleItem.displayStatus();
+			System.out.printf("\nを%dZで売却しました。",salePrice);
+			
 			pl.income(salePrice);
 		}
 	}
@@ -430,7 +434,7 @@ public abstract class GameSystem {
 	//時間経過表現
 	public static void elapsed() {
 		for(int i = 0;i < 3;i++) {
-			System.out.println("：▼");
+			System.out.print("：▼");
 			pushEnterKey();
 		}
 	}

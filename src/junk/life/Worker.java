@@ -7,9 +7,9 @@ public abstract class Worker extends Human{
 	}
 	
 	
-	public abstract void winner();
+	public abstract void winner(Human human);
 	public abstract void loser(Human human);
-	public abstract void draw();
-	public abstract void run();
+	public abstract void draw(Human human);
+	public abstract void run(Human human);
 	public abstract void persuade(Human human);
 }

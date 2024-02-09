@@ -83,4 +83,27 @@ public class FileSystem {
 	
 	//アイテムの説明（価格表の名前を使用）
 	
+	
+	//鑑定士フレーバーテキスト
+	public static void infoAppraiser() {
+		File file = new File("data/flavor_appraiser.txt");
+		String line = null;
+		List<String> list = new ArrayList<String>();
+		
+		try(BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(file),"UTF-8"))){
+			while((line = br.readLine()) != null){
+				list.add(line);
+			}
+		}catch(IOException e) {
+			;
+		}
+		
+		for(String text : list) {
+			System.out.print(text);
+			GameSystem.pushEnterKey();
+		}
+		System.out.println("");
+	}
+	
+	
 }

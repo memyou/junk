@@ -1,5 +1,7 @@
 package junk.item;
 
+import junk.life.Begger;
+
 public class Item {
 	private String name; //アイテム名
 	private int price; //アイテムの価値
@@ -12,6 +14,11 @@ public class Item {
 	public Item() {
 		this.identified = false;
 		this.rarity = new Rarity();
+	}
+	
+	public Item(Begger begger) {
+		this.identified = false;
+		this.rarity = new Rarity(begger);
 	}
 	
 	public void identified(String name,int price,Category category) {

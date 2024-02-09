@@ -1,5 +1,7 @@
 package junk.life;
 
+import junk.system.VsNpcSystem;
+
 public class Begger extends Human{
 	
 	
@@ -19,14 +21,20 @@ public class Begger extends Human{
 		System.out.println("『ああ、どうかお慈悲を……お待ちくだされ……』");
 	}
 	
-	//負け確定
+	//物乞いは負け確定
 	public void loser() {
-		System.out.println("『』");
+		System.out.println("『ひぃぃ、お助けぇ……！』");
 	}
 	
-	//説得された時
-	public void persuade() {
-		System.out.println("『』");
+	//対話時
+	public void persuade(Player pl) {
+		if(pl.getMoney() == 0) {
+			System.out.println("『そうでございましたか、無理を言って申し訳ありません……。』");
+			System.out.println("『貴方の労働に幸あらんことを。それでは……。』");
+		}else {
+			System.out.println("『おお、なんと慈悲深い……ありがとうございます、労働者様……！』");
+			VsNpcSystem.take(pl,this);
+		}
 	}
 	
 	

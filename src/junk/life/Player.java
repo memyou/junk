@@ -7,6 +7,7 @@ import junk.field.Field;
 import junk.item.Item;
 import junk.system.GameSystem;
 import junk.system.Score;
+import junk.system.VsNpcSystem;
 
 public class Player extends Worker{
 	private int whereFieldNum;
@@ -29,7 +30,7 @@ public class Player extends Worker{
 	@Override
 	public void showStatus() {
 		System.out.printf("名前：%S\n",super.getName());
-		System.out.printf("現在の所持金：%dZ\n" + this.getMoney());
+		System.out.printf("現在の所持金：%dZ\n",this.getMoney());
 		//フレーバーテキスト
 		System.out.println("");
 	}
@@ -37,7 +38,7 @@ public class Player extends Worker{
 	//現在位置確認
 	public void whereNow(Field[][] field,Player pl) {
 		System.out.println("\n「現在位置は……」");
-		System.out.printf("区画No.\n",this.getWhereFieldNum());
+		System.out.printf("区画No.%d\n",this.getWhereFieldNum());
 		//地図情報呼び出し
 		GameSystem.mapStatus(field,pl);
 	}
@@ -48,15 +49,18 @@ public class Player extends Worker{
 			for(int j = 0;j < Field.AREA;j++) {
 				if(field[i][j].getFieldNum() == this.whereFieldNum) {
 					if(field[i][j].getItem() == null) {
+						//アイテムがフィールドになかった時
 						System.out.println("「ここにはもう何もないようだ。」");
 					}else {
+						//アイテムがまだある時
 						score.allDigItem();
 						System.out.println("\n採掘を開始します。");
-						for(int k = 0;k < 3;k++) {
-							GameSystem.elapsed();
-						}
+						//時間経過表現
+						GameSystem.elapsed();
+						//フィールドからアイテムを取り出す
 						this.allItemList.add(field[i][j].getItem());
 						field[i][j].setItem(null);
+						//ターン経過
 						score.countTurn();
 						System.out.println("アイテムを入手しました。本日の残り発掘回数：" + (Score.MAX_TURN - score.getCoutnTurn()));
 						if(score.getCoutnTurn() == Score.MAX_TURN) {
@@ -178,6 +182,13 @@ public class Player extends Worker{
 		GameSystem.appraisal(this,appraiser,scNum,select,score);
 	}
 	
+	//鑑定士に鑑定を依頼
+	public void appraisalItem(Scanner scNum,int select,Appraiser appraiser) {
+		System.out.println("\n「鑑定を頼む。」");
+		//鑑定による鑑定処理
+		appraiser.appraisalItem(this,scNum,select);
+	}
+	
 	//鑑定士にアイテムを売る
 	public void saleItem(Appraiser appraiser,Scanner scNum,Score score) {
 		System.out.println("\n「アイテムを売ろう。」");
@@ -188,7 +199,7 @@ public class Player extends Worker{
 			return;
 		}else {
 			//1以上アイテムを所持していたら
-			GameSystem.saleItem(this,appraiser,scNum,score);
+			appraiser.saleItem(this,scNum,score);
 		}
 	}
 	
@@ -214,20 +225,62 @@ public class Player extends Worker{
 		
 	}
 	
+	//戦闘に入る
+	public void battle(Human human) {
+		if(human instanceof Appraiser) {
+			//鑑定士相手
+			System.out.println("（あいつから何か奪えれば……。）");
+		}else if(human instanceof Thief) {
+			//盗賊相手
+			System.out.println("「全く、盗賊に出くわすとは運が悪いね。」");
+		}else if(human instanceof Begger) {
+			//物乞い相手
+			System.out.println("「まじか、会いたくなかったんだけどな……。」");
+		}
+	}
+	
 	//相手を観察する
 	public void observation(Human human) {
 		System.out.println("\n「相手を観察してみよう。」");
 		human.showStatus();
 	}
 	
-	//敵を説得する
+	//敵と対話する
 	public void persuade(Human human) {
-		
+		if(human instanceof Thief) {
+			Thief thief = (Thief)human;
+			System.out.println("「あんたも採掘に来たんだろ。他人にかかわっている暇があるのか？」");
+			thief.persuade(this);
+		}else if(human instanceof Begger) {
+			Begger begger = (Begger)human;
+			System.out.println("「わかったよ、でも余り沢山はやれないからな。」");
+			if(this.getMoney() == 0) {
+				System.out.println("「あ、すまない、今手持ちが全く……」");
+				begger.persuade(this);
+			}else {
+				//物乞いの反応呼び出し
+				System.out.println("「出せるのはこれだけだ。」");
+				//物乞いに渡すお金の処理
+				VsNpcSystem.give(this);
+				//物乞いの反応呼び出し
+				begger.persuade(this);
+				
+			}
+		}
 	}
 	
 	//プレイヤー勝利
 	@Override
-	public void winner() {
+	public void winner(Human human) {
+		if(human instanceof Thief) {
+			Thief thief = (Thief)human;
+			System.out.println("「ま、こんなものかな。」");
+			thief.loser(this);
+		}else if(human instanceof Begger){
+			Begger begger = (Begger)human;
+			System.out.println("「さっさと消えてくれ。」");
+			begger.loser();
+		}
 		
 	}
 	
@@ -237,9 +290,13 @@ public class Player extends Worker{
 		//インスタンス調査
 		if(human instanceof Appraiser) {
 			//鑑定士に敵対した時
+			Appraiser appraiser = (Appraiser)human;
+			appraiser.winner(this);
 			System.out.println("「ラジアーパと敵対するんじゃなかった……。何なんだ、あの強さは。」");
-		}if(human instanceof Thief) {
+		}else if(human instanceof Thief) {
 			//盗賊に敵対した時
+			Thief thief = (Thief)human;
+			thief.winner(this);
 			if(this.getAllItemList().size() == 0) {
 			System.out.println("「せっかく採掘したアイテムが全部奪われてしまった……。」");
 			}else {
@@ -250,14 +307,32 @@ public class Player extends Worker{
 	
 	//引き分け
 	@Override
-	public void draw() {
-		System.out.println("「何とかやり過ごすことが出来た。」");
+	public void draw(Human human) {
+		if(human instanceof Thief) {
+			Thief thief = (Thief)human;
+			thief.draw(this);
+			System.out.println("「ふう、何とかなってよかった。」");
+		}
 	}
 	
 	//逃走
 	@Override
-	public void run() {
-		System.out.println("「よし、無事離れることが出来た。」");
+	public void run(Human human) {
+		if(human instanceof Thief) {
+			Thief thief = (Thief)human;
+			System.out.println("「ここは……逃げるが勝ち！」");
+			//盗賊の反応呼び出し
+			thief.run(this);
+			GameSystem.elapsed(); //時間経過表現
+			System.out.println("「よし、なんとか振り切ったぞ……。」");
+		}else if(human instanceof Begger) {
+			Begger begger = (Begger)human;
+			System.out.println("「悪いがあんたにかまっている暇はないんだ。」");
+			//物乞いの反応呼び出し
+			begger.run();
+			GameSystem.elapsed(); //時間経過表現
+			System.out.println("「はあ……誰かに施せるほどの余裕はないよ。」");
+		}
 	}
 	
 	//売却して収入を得る

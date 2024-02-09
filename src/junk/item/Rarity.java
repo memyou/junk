@@ -2,6 +2,8 @@ package junk.item;
 
 import java.util.Random;
 
+import junk.life.Begger;
+
 public class Rarity {
 	private String rarity;
 	private String rarityStatus;
@@ -37,6 +39,29 @@ public class Rarity {
 			index = 1;
 		}else {
 			index = 0;;
+		}
+		
+		this.rarity = RARITY[index];
+		this.rarityStatus = RARITYSTATUS[index];
+	}
+	
+	//レアリティを指定したコンストラクタ、物乞いが生成する、N以上を生成
+	public Rarity(Begger begger) {
+		//レアリティをランダム生成
+		int randRarity = new Random().nextInt(6) + 1;
+		int index = 0;
+		
+		switch(randRarity) {
+		case 4:
+		case 5:
+			index = 1;
+			break;
+		case 6:
+			index = 0;
+			break;
+		default:
+			index = 2;
+			break;
 		}
 		
 		this.rarity = RARITY[index];
