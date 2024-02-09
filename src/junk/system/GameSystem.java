@@ -4,8 +4,6 @@ import java.util.List;
 import java.util.Random;
 import java.util.Scanner;
 
-import junk.event.EnemyEvent;
-import junk.event.Event;
 import junk.field.Field;
 import junk.item.Accessory;
 import junk.item.Born;
@@ -15,10 +13,7 @@ import junk.item.Machine;
 import junk.item.Metal;
 import junk.item.Wepon;
 import junk.life.Appraiser;
-import junk.life.Begger;
-import junk.life.Human;
 import junk.life.Player;
-import junk.life.Thief;
 
 //ゲームに必要なフィールド、人物などの生成用
 public abstract class GameSystem {
@@ -44,34 +39,6 @@ public abstract class GameSystem {
 				fi.setItem(new Item());
 			}
 		}
-		
-		//対人イベントの生成とセット
-		Event enemyEvent = null;
-		Human enemy = null;
-		
-		//イベント生成用乱数
-		int r = (int)Math.random() * 10;
-		
-		for(int i = 0;i < Field.AREA;i++) {
-			for(int j = 0;j < Field.AREA;j++) {
-				if(2 <= r && r >= 7) {
-					//盗賊生成の処理
-					int bodyType = new Random().nextInt(3) + 1;
-					enemy = new Thief(bodyType);
-					enemyEvent = new EnemyEvent(enemy);
-					field[i][j].setEvent(enemyEvent);
-				}else if(1 == r) {
-					//物乞い生成の処理
-					enemy = new Begger();
-					enemyEvent = new EnemyEvent(enemy);
-					field[i][j].setEvent(enemyEvent);
-				}else {
-					enemyEvent = new EnemyEvent(enemy);
-					field[i][j].setEvent(enemyEvent);
-				}
-			}
-		}
-		
 		return field;
 	}
 	
@@ -155,7 +122,7 @@ public abstract class GameSystem {
 	
 	
 	//マップ内の自分の位置とアイテムの有無
-	static void mapStatus(Field[][] field,Player pl) {
+	public static void mapStatus(Field[][] field,Player pl) {
 		System.out.println("\n[現在位置]");
 		String[][] map = new String[Field.AREA][Field.AREA];
 		
@@ -263,11 +230,11 @@ public abstract class GameSystem {
 	}
 	
 	//情報確認、自分のステータス、アイテムの買取価格表、アイテムのフレーバーテキスト
-	static void displayData(Scanner scNum,Player pl,int select) {
+	public static void displayData(Scanner scNum,Field[][] field,Player pl,int select) {
 		while(true) {
 			do {
 				System.out.println("\n何の情報を確かめますか？");
-				System.out.print("1.自分のステータス 2.発掘アイテム一覧 3.アイテムの買取価格表 4.アイテムの説明 5.戻る >>");
+				System.out.print("1.自分のステータス 2.現在位置確認 3.発掘アイテム一覧 4.アイテムの買取価格表 5.アイテムの説明 6.戻る >>");
 				select = scNum.nextInt();
 				if(0 >= select || select > 6) {
 					System.out.println("選択肢は1～4を入力してください。");
@@ -279,15 +246,19 @@ public abstract class GameSystem {
 				pl.showStatus();
 				break;
 			case 2:
-				pl.haveItem();
+				pl.whereNow(field,pl);
 				break;
 			case 3:
-				
+				pl.haveItem();
 				break;
 			case 4:
 				
 				break;
 			case 5:
+				
+				break;
+			case 6:
+				System.out.println("情報確認を終了します。");
 				return;
 			}
 		}
@@ -350,7 +321,7 @@ public abstract class GameSystem {
 				if(pl.getAllItemList().get(select - 1).getIdentified() != true) {
 					System.out.println("『それでは鑑定致しましょう。』");
 					for(int i = 0;i < 3;i++) {
-						GameSystem.pushEnterKey();
+						GameSystem.elapsed();
 					}
 					System.out.println("『これはこれは……はい、鑑定終了でございます。』");
 				}
@@ -406,6 +377,48 @@ public abstract class GameSystem {
 			pl.income(salePrice);
 		}
 	}
+	
+	//仕事を一回休む
+	public static void restWork(Scanner scNum,int select,Score score) {
+		System.out.println("「\n発掘作業を一回休もうか？」");
+		do {
+			System.out.print("休みを取ると発掘回数を１消費します。休みますか？ 1.はい 2.いいえ >>");
+			select = scNum.nextInt();
+			if(0 >= select || select > 3) {
+				System.out.println("選択肢は1または2です。");
+			}
+		}while(0 >= select || select > 3);
+		switch(select) {
+		case 1:
+			score.countTurn();
+			System.out.println("\n発掘作業をしませんでした。１日の残り採掘回数：" + (Score.MAX_TURN - score.getCoutnTurn()));
+			if(score.getCountDay() == Score.MAX_DAY && score.getCoutnTurn() == Score.MAX_TURN) {
+				System.out.println("「今回の仕事はここまでだ。換金して帰ろう。」");
+			}
+			break;
+		case 2:
+			System.out.println("「やっぱり作業をしよう。」");
+			break;
+		}
+	}
+
+	
+	//現在位置とマップの位置を一致させるだけの処理
+	public static Field now(Field[][] field,Player pl) {
+		Field fieldNow = null;
+		
+		for(int i = 0;i < Field.AREA;i++) {
+			for(int j = 0;j < Field.AREA;j++) {
+				if(field[i][j].getFieldNum() == pl.getWhereFieldNum()) {
+					fieldNow = field[i][j];
+				}
+			}
+		}
+		return fieldNow;
+	}
+	
+	
+	
 	
 	
 

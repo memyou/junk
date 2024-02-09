@@ -3,8 +3,6 @@ package junk.system;
 import java.util.Random;
 import java.util.Scanner;
 
-import junk.event.EnemyEvent;
-import junk.field.Field;
 import junk.item.Item;
 import junk.life.Appraiser;
 import junk.life.Begger;
@@ -14,34 +12,43 @@ import junk.life.Thief;
 
 //対人イベント(戦闘関連)の処理について
 public abstract class VsNpcSystem {
+	//対人イベントの生成
+	public static Human newEnemy() {
+		//生成用乱数
+		int r = (int)Math.random() * 10;
+		
+		if(2 <= r && r >= 5) {
+			//盗賊生成の処理
+			int bodyType = new Random().nextInt(3) + 1;
+			Thief thief = new Thief(bodyType);
+			return thief;
+		}else if(1 == r) {
+			//物乞い生成の処理
+			Begger begger = new Begger();
+			return begger;
+		}else {
+			return null;
+		}
+	}
+	
+	
+	
 	//接敵
-	static void encountEnemy(int select,Scanner scNum,Player pl,Score score,Field fieldEvent) {
-		EnemyEvent ee = null;
-		Human enemy = null;
-		
-		score.encountEnemy();
-		
-		//EventがEnemyEventかの調査
-		if(fieldEvent.getEvent() instanceof EnemyEvent) {
-			ee = (EnemyEvent)fieldEvent.getEvent();
-			enemy = ee.getEnemy();
-		}
-		
-		//Eventの中身の敵が誰か調査
+	public static void encountEnemy(int select,Scanner scNum,Player pl,Score score,Human enemy) {
+		//中身のインスタンスを判定
+		Thief thief = null;
 		if(enemy instanceof Thief) {
-			//盗賊登場セリフ
-			enemy = (Thief)ee.getEnemy();
-			
-		}else if(enemy instanceof Begger) {
-			//物乞い登場セリフ
-			enemy = (Begger)ee.getEnemy();
-			
+			thief = (Thief)enemy;
+		}
+		Begger begger = null;
+		if(enemy instanceof Begger) {
+			begger = (Begger)enemy;
 		}
 		
-		
+
 		while(true) {
 			do {
-				System.out.printf("\n「%sと遭遇してしまった。どうしよう？」\n",ee.getEnemy().getName());
+				System.out.printf("\n「%sに遭遇してしまった。どう切り抜けよう？」\n",enemy.getName());
 				System.out.print("1.戦う 2.逃げる 3.対話する 4.観察する >>");
 				select = scNum.nextInt();
 				if(0 >= select || select > 5) {
@@ -73,9 +80,19 @@ public abstract class VsNpcSystem {
 	static void battle(Player pl,Human human,Score score) {
 	
 	//敵性存在のインスタンス調査
-	Appraiser appraiser = (Appraiser)human.investigation(human);
-	Thief thief = (Thief)human.investigation(human);
-	Begger begger = (Begger)human.investigation(human);
+	Appraiser appraiser = null;
+	if(human instanceof Appraiser) {
+		appraiser = (Appraiser)human;
+	}
+	Thief thief = null;
+	if(human instanceof Thief) {
+		thief = (Thief)human;
+	}
+	Begger begger = null;
+	if(human instanceof Begger) {
+		begger = (Begger)human;
+	}
+	
 	
 	score.battleEnemy();
 	if(appraiser != null) {
@@ -130,13 +147,19 @@ public abstract class VsNpcSystem {
 	//敵から逃げる、失敗した時はさらに確率で勝敗決定
 	public static void run(Player pl,Human human,Score score) {
 		//インスタンスの調査
-		Thief thief = (Thief)human.investigation(human);
-		Begger begger = (Begger)human.investigation(human);
+		Thief thief = null;
+		if(human instanceof Thief) {
+			thief = (Thief)human;
+		}
+		Begger begger = null;
+		if(human instanceof Begger) {
+			begger = (Begger)human;
+		}
 		
 		if(begger != null) {
 			//物乞いなら確定で逃走可能
 			score.runaway();
-			begger.run();
+			begger.run(); //※逃げられた時の反応
 			pl.run();
 		}else{
 			if(pl.getBodyType() < human.getBodyType()) {
@@ -162,6 +185,7 @@ public abstract class VsNpcSystem {
 				//確率で逃げられる
 				//0なら逃走可能、1ならさらに確率で勝敗決定
 				int rand = new Random().nextInt(2);
+				int fight = new Random().nextInt(2);
 				
 				if(rand == 0) {
 					//逃走出来たとき
@@ -177,7 +201,7 @@ public abstract class VsNpcSystem {
 					//逃走できなかった時
 					score.loseBattle();
 					
-					if(rand  == 0) {
+					if(fight  == 0) {
 						//勝ち
 						score.winBattle();
 						
@@ -205,22 +229,51 @@ public abstract class VsNpcSystem {
 	//敵と対話する、確率で成功、失敗すると確率で勝敗決定
 	public static void persuade(Player pl,Human human) {
 		//インスタンス調査
-		Thief thief = (Thief)human.investigation(human);
-		Begger begger = (Begger)human.investigation(human);
+		Thief thief = null;
+		if(human instanceof Thief) {
+			thief = (Thief)human;
+		}
+		Begger begger = null;
+		if(human instanceof Begger) {
+			begger = (Begger)human;
+		}
+		//成功の可否を判定
+		int rand = new Random().nextInt(2);
+		int fight = new Random().nextInt(2);
+		
 		
 		//
 		if(begger != null) {
 			//物乞いなら確定で成功
 			pl.persuade(begger);
-			
+			begger.persuade();
 		}else {
-			
-			
-			
+			//物乞い以外、確率で成功
+			if(rand == 0) {
+				//対話成功、損害なし
+				
+				
+				
+			}else {
+				//対話失敗、確率で勝敗
+				if(fight == 0) {
+					//勝ち
+					if(thief != null) {
+						//対盗賊
+						
+						
+					}
+				}else {
+					//負け
+					if(thief != null) {
+						//対盗賊
+						
+						
+						
+					}
+				}	
+			}
 		}
-		
-		
-		
 	}
 	
 	

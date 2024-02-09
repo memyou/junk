@@ -19,6 +19,18 @@ public class EnemyEvent implements Event{
 			//敵がいる時
 		}
 	}
+	
+	//イベントがエネミーイベントかどうか調査
+	public EnemyEvent investigation(Event event) {
+		EnemyEvent ee = this;
+		if(event instanceof EnemyEvent) {
+			ee = (EnemyEvent)event;
+			return ee;
+		}else {
+			return ee;
+		}
+	}
+	
 	public void setEnemy(Human enemy) { this.enemy = enemy; }
 	public Human getEnemy() { return this.enemy; }
 }

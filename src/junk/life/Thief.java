@@ -62,16 +62,6 @@ public class Thief extends Worker{
 	}
 
 	
-	//インスタンスの内容を検査する
-	@Override
-	public Thief investigation(Human human) {
-		Thief thief = null;
-		if(human instanceof Thief) {
-			thief = (Thief)human;
-			return thief;
-		}else {
-			return thief;
-		}
-	}
+	
 	
 }

@@ -30,15 +30,6 @@ public class Begger extends Human{
 	}
 	
 	
-	@Override
-	public Begger investigation(Human human) {
-		Begger begger = null;
-		if(human instanceof Begger) {
-			begger = (Begger)human;
-			return begger;
-		}else {
-			return begger;
-		}
-	}
+	
 	
 }

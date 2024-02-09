@@ -34,18 +34,13 @@ public class Player extends Worker{
 		System.out.println("");
 	}
 	
-	@Override
-	public Human investigation(Human human) {
-		Player player = null;
-		if(human instanceof Player) {
-			player = (Player)human;
-			return player;
-		}else {
-			return player;
-		}
+	//現在位置確認
+	public void whereNow(Field[][] field,Player pl) {
+		System.out.println("\n「現在位置は……」");
+		System.out.printf("区画No.\n",this.getWhereFieldNum());
+		//地図情報呼び出し
+		GameSystem.mapStatus(field,pl);
 	}
-	
-	
 	
 	//アイテム発掘
 	public void excavateItem(Field[][] field,Score score) {
@@ -197,29 +192,19 @@ public class Player extends Worker{
 		}
 	}
 	
+	//情報を確認する
+	public void displayData(Scanner scNum,Field[][] field,Player pl,int select) {
+		System.out.println("\n「何の情報を確認しよう？」");
+		//情報確認操作呼び出し
+		GameSystem.displayData(scNum,field,this,select);
+	}
+	
+	
 	//仕事を休む
 	public void restWork(Scanner scNum,int select,Score score) {
 		System.out.println("「\n発掘作業を一回休もうか？」");
-		do {
-			System.out.print("休みを取ると発掘回数を１消費します。休みますか？ 1.はい 2.いいえ >>");
-			select = scNum.nextInt();
-			if(0 >= select || select > 3) {
-				System.out.println("選択肢は1または2です。");
-			}
-		}while(0 >= select || select > 3);
-		switch(select) {
-		case 1:
-			score.countTurn();
-			System.out.println("\n発掘作業をしませんでした。１日の残り採掘回数：" + (Score.MAX_TURN - score.getCoutnTurn()));
-			if(score.getCountDay() == Score.MAX_DAY && score.getCoutnTurn() == Score.MAX_TURN) {
-				System.out.println("「今回の仕事はここまでだ。換金して帰ろう。」");
-				
-			}
-			break;
-		case 2:
-			System.out.println("「やっぱり作業をしよう。」");
-			break;
-		}
+		//休息操作呼び出し
+		GameSystem.restWork(scNum,select,score);
 	}
 	
 	//仕事を終える
@@ -234,10 +219,6 @@ public class Player extends Worker{
 		System.out.println("\n「相手を観察してみよう。」");
 		human.showStatus();
 	}
-	
-	
-	
-	
 	
 	//敵を説得する
 	public void persuade(Human human) {
@@ -254,13 +235,10 @@ public class Player extends Worker{
 	@Override
 	public void loser(Human human) {
 		//インスタンス調査
-		Appraiser appraiser = (Appraiser)human.investigation(human);
-		Thief thief = (Thief)human.investigation(human);
-		
-		if(appraiser != null) {
+		if(human instanceof Appraiser) {
 			//鑑定士に敵対した時
 			System.out.println("「ラジアーパと敵対するんじゃなかった……。何なんだ、あの強さは。」");
-		}else if(thief != null){
+		}if(human instanceof Thief) {
 			//盗賊に敵対した時
 			if(this.getAllItemList().size() == 0) {
 			System.out.println("「せっかく採掘したアイテムが全部奪われてしまった……。」");

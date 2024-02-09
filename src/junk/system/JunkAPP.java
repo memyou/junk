@@ -7,6 +7,7 @@ import java.util.Scanner;
 import junk.field.Field;
 import junk.item.Item;
 import junk.life.Appraiser;
+import junk.life.Human;
 import junk.life.Player;
 
 public class JunkAPP {
@@ -44,6 +45,9 @@ public class JunkAPP {
 		
 		//ゲーム開始
 		pl = GameSystem.cleatePlayer(scName,scNum,pl,itemList);
+		
+		
+		
 		score.countDay();
 		System.out.println("\n***廃棄区画入口***");
 		while(true) {
@@ -64,7 +68,7 @@ public class JunkAPP {
 					pl.callAppraiser(appraiser,scNum,select,score);
 					break;
 				case 2://情報確認
-					GameSystem.displayData(scNum,pl,select);
+					GameSystem.displayData(scNum,field,pl,select);
 					break;
 				case 3://データ保存
 					
@@ -75,24 +79,13 @@ public class JunkAPP {
 					
 					break;
 				}
-			}else {
+			}else{
 				
-				//盗賊、物乞いがいるかどうか
-				for(int i = 0;i < Field.AREA;i++) {
-					for(int j = 0;j < Field.AREA;j++) {
-						if(field[i][j].getFieldNum() == pl.getWhereFieldNum()) {
-							//いたら
-							if(field[i][j].getEvent() != null) {
-								Field fieldEvent = field[i][j];
-								VsNpcSystem.encountEnemy(select,scNum,pl,score,fieldEvent);
-								
-								//イベント終了
-								fieldEvent.setEvent(null);
-							}
-						}
-					}
+				Human enemy = null;
+				enemy = VsNpcSystem.newEnemy();
+				if(enemy != null) {
+					VsNpcSystem.encountEnemy(select,scNum,pl,score,enemy);
 				}
-				
 				
 				System.out.println("\n「何をしようか？」");
 				do {
@@ -110,8 +103,10 @@ public class JunkAPP {
 					break;
 				case 2:
 					//先へ進む
+					//現在位置の表示
 					GameSystem.mapStatus(field,pl);
 					pl.moveOn(scNum,field);
+					//移動後位置の表示
 					GameSystem.mapStatus(field,pl);
 					break;
 				case 3:
@@ -120,7 +115,7 @@ public class JunkAPP {
 					break;
 				case 4:
 					//情報確認
-					GameSystem.displayData(scNum,pl,select);
+					pl.displayData(scNum,field,pl,select);
 					break;
 				case 5:
 					//仕事を休む

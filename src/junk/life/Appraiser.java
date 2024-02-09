@@ -42,19 +42,6 @@ public class Appraiser extends Human{
 		System.out.println("『』");
 	}
 	
-
-	//インスタンスの正体を調査
-	public Appraiser investigation(Human human) {
-		Appraiser appraiser = null;
-		if(human instanceof Appraiser) {
-			appraiser = (Appraiser)human;
-			return appraiser;
-		}else {
-			return appraiser = null;
-		}
-	}
-	
-	
 	
 	
 }
