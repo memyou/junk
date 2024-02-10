@@ -322,7 +322,7 @@ public abstract class GameSystem {
 				if(select == 0) {
 					GameSystem.setItemStatus(pl,select);
 				}else {
-					GameSystem.setItemStatus(pl,select);
+					GameSystem.setItemStatus(pl,select - 1);
 				}
 				GameSystem.elapsed(); //時間経過表現
 				System.out.println("『これはこれは……はい、鑑定終了でございます。』");
@@ -349,7 +349,7 @@ public abstract class GameSystem {
 			if(select > 1) {
 				item = pl.getAllItemList().get((select - 1));
 				if(item.getIdentified() == false) {
-					System.out.println("これは未鑑定のアイテムです。売却には鑑定済みのアイテムを選択してください。");
+					System.out.println("\nこれは未鑑定のアイテムです。売却には鑑定済みのアイテムを選択してください。");
 				}
 			}
 			
@@ -378,8 +378,8 @@ public abstract class GameSystem {
 			pl.income(salePrice);
 			
 			GameSystem.elapsed(); //時間経過表現
-			System.out.println("全ての鑑定済みアイテムを売却しました。");
-			pl.haveItem();
+			System.out.println("\n全ての鑑定済みアイテムを売却しました。");
+			System.out.printf("売却金額は%dZでした。\n",salePrice);
 		}else {
 			System.out.println("\n選択したアイテムのみ売却します。");
 			score.saleItem();
@@ -396,24 +396,24 @@ public abstract class GameSystem {
 	
 	//仕事を一回休む
 	public static void restWork(Scanner scNum,int select,Score score) {
-		System.out.println("「\n発掘作業を一回休もうか？」");
+		System.out.println("\n「発掘作業を1回休もうか？」");
 		do {
-			System.out.print("休みを取ると発掘回数を１消費します。休みますか？ 1.はい 2.いいえ >>");
+			System.out.print("休みを取ると発掘回数を1消費します。休みますか？ 1.はい 2.いいえ >>");
 			select = scNum.nextInt();
 			if(0 >= select || select > 3) {
-				System.out.println("選択肢は1または2です。");
+				System.out.println("\n選択肢は1または2を入力してください。");
 			}
 		}while(0 >= select || select > 3);
 		switch(select) {
 		case 1:
 			score.countTurn();
-			System.out.println("\n発掘作業をしませんでした。１日の残り採掘回数：" + (Score.MAX_TURN - score.getCoutnTurn()));
+			System.out.println("\n発掘作業をしませんでした。1日の残り採掘回数：" + (Score.MAX_TURN - score.getCoutnTurn()));
 			if(score.getCountDay() == Score.MAX_DAY && score.getCoutnTurn() == Score.MAX_TURN) {
-				System.out.println("「今回の仕事はここまでだ。換金して帰ろう。」");
+				System.out.println("\n「今回の仕事はここまでだ。換金して帰ろう。」");
 			}
 			break;
 		case 2:
-			System.out.println("「やっぱり作業をしよう。」");
+			System.out.println("\n「やっぱり作業をしよう。」");
 			break;
 		}
 	}
@@ -448,26 +448,26 @@ public abstract class GameSystem {
 		
 		switch(select) {
 		case 1:
-			FileSystem.flavortxt("flavor_machine.txt");
+			FileSystem.flavortxt("data/flavor_machine.txt");
 			break;
 		case 2:
-			FileSystem.flavortxt("flavor_accessory.txt");
+			FileSystem.flavortxt("data/flavor_accessory.txt");
 			break;
 		case 3:
-			FileSystem.flavortxt("flavor_metal.txt");
+			FileSystem.flavortxt("data/flavor_metal.txt");
 			break;
 		case 4:
-			FileSystem.flavortxt("flavor_wepon.txt");
+			FileSystem.flavortxt("data/flavor_wepon.txt");
 			break;
 		case 5:
-			FileSystem.flavortxt("flavor_born.txt");
+			FileSystem.flavortxt("data/flavor_born.txt");
 			break;
 		case 6:
-			FileSystem.flavortxt("flavor_machine.txt");
-			FileSystem.flavortxt("flavor_accessory.txt");
-			FileSystem.flavortxt("flavor_metal.txt");
-			FileSystem.flavortxt("flavor_wepon.txt");
-			FileSystem.flavortxt("flavor_born.txt");
+			FileSystem.flavortxt("data/flavor_machine.txt");
+			FileSystem.flavortxt("data/flavor_accessory.txt");
+			FileSystem.flavortxt("data/flavor_metal.txt");
+			FileSystem.flavortxt("data/flavor_wepon.txt");
+			FileSystem.flavortxt("data/flavor_born.txt");
 			break;
 		case 7:
 			System.out.println("アイテムの説明を終了します。");
@@ -475,8 +475,28 @@ public abstract class GameSystem {
 		}
 	}
 	
-	
-	
+	//ゲームを終了する
+	public static void endWork(Scanner scNum,int select,Score score,Player pl) {
+		do {
+			//あとどれくらい作業できるかの表示
+			
+			System.out.print("労働をやめ、区画から退場しますか？ 1.はい 2.いいえ >>");
+			select = scNum.nextInt();
+			if(0 >= select || select > 3) {
+				System.out.println("\n選択肢は1または2を入力してください。");
+			}
+		}while(0 >= select || select > 3);
+		
+		if(select == 0) {
+			//セーブをして終了
+			System.out.println("");
+			FileSystem.save(pl);
+		}else {
+			System.out.println("\n労働を再開します。");
+			return;
+		}
+		
+	}
 
 	//エンターキーのみの入力用
 	public static void pushEnterKey() {

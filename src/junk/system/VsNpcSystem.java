@@ -62,6 +62,7 @@ public abstract class VsNpcSystem {
 		
 		//プレイヤーの戦闘突入セリフ
 		pl.battle(human);
+		GameSystem.elapsed(); //時間経過表現
 		
 	if(human instanceof Appraiser) {
 		//鑑定士を襲撃した時
@@ -93,6 +94,9 @@ public abstract class VsNpcSystem {
 	//逃げる
 	//敵から逃げる、失敗した時はさらに確率で勝敗決定
 	public static void run(Player pl,Human human,Score score) {
+		
+		GameSystem.elapsed(); //時間経過表現
+		
 		if(human instanceof Begger) {
 			//物乞いなら確定で逃走可能
 			score.runaway(); //逃走計測
@@ -234,12 +238,13 @@ public abstract class VsNpcSystem {
 		}
 	}
 	
-	//物乞いに施す、～所持金額の半分
+	//物乞いに施す、～所持金額の半分（のはず）
 	public static void give(Player pl) {
 		double rand = new Random().nextDouble(5) + 1;
 		int haveMoney = pl.getMoney();
 		int giveMoney = (int)(haveMoney * (rand / 10));
 		pl.setMoney((haveMoney - giveMoney));
+		System.out.printf("%dZを施しました。\n",giveMoney);
 	}
 	
 	//物乞いからアイテムを譲られる処理、ランダムでＮ以上のアイテムを１つ取得

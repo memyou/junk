@@ -166,7 +166,7 @@ public class Player extends Worker{
 	//所持全アイテム確認
 	public void haveItem() {
 		if(this.allItemList.size() == 0) {
-			System.out.println("「まだ何も発掘していない。」");
+			System.out.println("\n「今は何も所持していない。」");
 		}else {
 			System.out.println("\n***所持アイテムリスト***");
 			for(int i = 0;i < this.allItemList.size();i++) {
@@ -178,7 +178,8 @@ public class Player extends Worker{
 	
 	//鑑定士の呼び出し
 	public void callAppraiser(Appraiser appraiser,Scanner scNum,int select,Score score) {
-		score.countCallAp();
+		score.countCallAp(); //鑑定士呼び出し計測
+		
 		System.out.println("\n「鑑定士を呼ぼう。」");
 		GameSystem.appraisal(this,appraiser,scNum,select,score);
 	}
@@ -221,7 +222,7 @@ public class Player extends Worker{
 	
 	//仕事を終える
 	public void endWork(Scanner scNum,int select,Score score) {
-		
+		System.out.println("\n「今回の仕事はもう終わろうかな。」");
 		
 		
 	}
@@ -236,7 +237,7 @@ public class Player extends Worker{
 			System.out.println("「全く、盗賊に出くわすとは運が悪いね。」");
 		}else if(human instanceof Begger) {
 			//物乞い相手
-			System.out.println("「まじか、会いたくなかったんだけどな……。」");
+			System.out.println("「あんまり会いたくなかったんだけどな……。」");
 		}
 	}
 	
@@ -261,6 +262,9 @@ public class Player extends Worker{
 			}else {
 				//物乞いの反応呼び出し
 				System.out.println("「出せるのはこれだけだ。」");
+				
+				GameSystem.elapsed(); //時間経過表現
+				
 				//物乞いに渡すお金の処理
 				VsNpcSystem.give(this);
 				//物乞いの反応呼び出し

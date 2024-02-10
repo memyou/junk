@@ -83,8 +83,8 @@ public class JunkAPP {
 				case 4://終了
 					System.out.println("お疲れ様でした。またの労働をお待ちしております。");
 					//最終データ表示
-					
-					break;
+					score.allScore(pl);
+					return;
 				}
 			}else{
 				
@@ -143,8 +143,9 @@ public class JunkAPP {
 					break;
 				case 6:
 					//退場処理
-					pl.endWork(scNum,select,score);
-					break;
+					System.out.println("※実装されていません※");
+					//pl.endWork(scNum,select,score);
+					return;
 				}
 			}	
 			
