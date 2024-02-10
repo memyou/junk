@@ -12,26 +12,6 @@ import junk.life.Thief;
 
 //対人イベント(戦闘関連)の処理について
 public abstract class VsNpcSystem {
-	//対人イベントの生成
-	public static Human newEnemy() {
-		//生成用乱数
-		int r = (int)Math.random() * 10;
-		
-		if(2 <= r && r >= 5) {
-			//盗賊生成の処理
-			int bodyType = new Random().nextInt(3) + 1;
-			Thief thief = new Thief(bodyType);
-			return thief;
-		}else if(1 == r) {
-			//物乞い生成の処理
-			Begger begger = new Begger();
-			return begger;
-		}else {
-			return null;
-		}
-	}
-	
-	
 	
 	//接敵
 	public static void encountEnemy(int select,Scanner scNum,Player pl,Score score,Human enemy) {

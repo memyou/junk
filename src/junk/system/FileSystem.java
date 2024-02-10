@@ -39,7 +39,7 @@ public class FileSystem {
 	}
 	
 	//プレイヤーデータを書き込み
-	static void seve(Player pl) {
+	static void save(Player pl) {
 		Gson gson = new Gson();
 		String json = gson.toJson(pl);
 		File file = new File("playerDeta.json");
@@ -75,18 +75,9 @@ public class FileSystem {
 		return pl;
 	}
 	
-	
-	//アイテム買取価格表
-	
-	
-	
-	
-	//アイテムの説明（価格表の名前を使用）
-	
-	
-	//鑑定士フレーバーテキスト
-	public static void infoAppraiser() {
-		File file = new File("data/flavor_appraiser.txt");
+	//フレーバーテキストの読み込みと表示
+	public static void flavortxt(String filename) {
+		File file = new File(filename);
 		String line = null;
 		List<String> list = new ArrayList<String>();
 		
@@ -100,10 +91,11 @@ public class FileSystem {
 		
 		for(String text : list) {
 			System.out.print(text);
-			GameSystem.pushEnterKey();
 		}
 		System.out.println("");
 	}
+	
+	
 	
 	
 }

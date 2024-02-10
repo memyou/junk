@@ -16,8 +16,8 @@ public class Appraiser extends Human{
 	@Override
 	public void showStatus() {
 		System.out.printf("名前：%S\n",super.getName());
-		//フレーバーテキスト
-		FileSystem.infoAppraiser();
+		//フレーバーテキスト呼び出し
+		FileSystem.flavortxt("data/flavor_appraiser.txt");
 	}
 	
 	//プレイヤーの呼び出しを受けた時

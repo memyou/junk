@@ -1,5 +1,7 @@
 package junk.life;
 
+import junk.system.FileSystem;
+import junk.system.GameSystem;
 import junk.system.VsNpcSystem;
 
 public class Thief extends Worker{
@@ -12,7 +14,7 @@ public class Thief extends Worker{
 	@Override
 	public void showStatus() {
 		System.out.printf("名前：%S\n",super.getName());
-		//来歴、短いフレーバーテキスト
+		//体格への言及
 		switch(super.getBodyType()) {
 		case 0:
 			//やせ型の盗賊
@@ -27,6 +29,8 @@ public class Thief extends Worker{
 			System.out.println("体の大きな盗賊。");
 			break;
 		}
+		//フレーバーテキスト呼び出し
+		FileSystem.flavortxt("data/flavor_thief.txt");
 	}
 	
 	//登場セリフ
@@ -42,6 +46,7 @@ public class Thief extends Worker{
 			System.out.println("『ハハハ、俺の勝ちだァ！　てめえのアイテムを頂いていくぜ！』");
 			//強奪処理
 			int rub = VsNpcSystem.rubItem(pl);
+			GameSystem.elapsed(); //時間経過表現
 			rubItem(rub);
 		}
 	}
@@ -76,7 +81,7 @@ public class Thief extends Worker{
 	//盗賊を説得した時
 	@Override
 	public void persuade(Human human) {
-		System.out.println("『……はあ、今回は見逃してやるよ』");
+		System.out.println("『……はあ、今回は見逃してやるよ。』");
 		
 	}
 

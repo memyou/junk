@@ -5,6 +5,7 @@ import java.util.Scanner;
 
 import junk.field.Field;
 import junk.item.Item;
+import junk.system.FileSystem;
 import junk.system.GameSystem;
 import junk.system.Score;
 import junk.system.VsNpcSystem;
@@ -32,12 +33,12 @@ public class Player extends Worker{
 		System.out.printf("名前：%S\n",super.getName());
 		System.out.printf("現在の所持金：%dZ\n",this.getMoney());
 		//フレーバーテキスト
-		System.out.println("");
+		FileSystem.flavortxt("data/flavor_player.txt");
 	}
 	
 	//現在位置確認
 	public void whereNow(Field[][] field,Player pl) {
-		System.out.println("\n「現在位置は……」");
+		System.out.println("\n「現在位置は……。」");
 		System.out.printf("区画No.%d\n",this.getWhereFieldNum());
 		//地図情報呼び出し
 		GameSystem.mapStatus(field,pl);

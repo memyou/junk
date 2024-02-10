@@ -1,5 +1,6 @@
 package junk.life;
 
+import junk.system.FileSystem;
 import junk.system.VsNpcSystem;
 
 public class Begger extends Human{
@@ -12,13 +13,12 @@ public class Begger extends Human{
 	@Override
 	public void showStatus() {
 		System.out.printf("名前：%S\n",super.getName());
-		//フレーバーテキスト
-		System.out.println("");
-		
+		//フレーバーテキスト呼び出し
+		FileSystem.flavortxt("data/flavor_begger.txt");
 	}
 	
 	public void run() {
-		System.out.println("『ああ、どうかお慈悲を……お待ちくだされ……』");
+		System.out.println("『ああ、どうかお慈悲を……お待ちくだされ……！』");
 	}
 	
 	//物乞いは負け確定

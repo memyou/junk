@@ -16,11 +16,13 @@ public class Item {
 		this.rarity = new Rarity();
 	}
 	
+	//物乞いがくれる
 	public Item(Begger begger) {
 		this.identified = false;
 		this.rarity = new Rarity(begger);
 	}
 	
+	//鑑定された時
 	public void identified(String name,int price,Category category) {
 		this.name = name;
 		this.price = price;

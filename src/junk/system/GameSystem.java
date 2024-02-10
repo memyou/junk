@@ -1,5 +1,6 @@
 package junk.system;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.Scanner;
@@ -124,6 +125,8 @@ public abstract class GameSystem {
 	//マップ内の自分の位置とアイテムの有無
 	public static void mapStatus(Field[][] field,Player pl) {
 		System.out.println("\n[現在位置]");
+		System.out.println("■：採掘可能\n□：採掘不可\n◎：プレイヤー\n");
+		
 		String[][] map = new String[Field.AREA][Field.AREA];
 		
 		for(int i = 0;i < Field.AREA;i++) {
@@ -185,7 +188,7 @@ public abstract class GameSystem {
 			}
 		}else if(category instanceof Machine) {
 			if(rand == 0) {
-				pl.getAllItemList().get(select).identified("■■社製純正パーツ",560,category);
+				pl.getAllItemList().get(select).identified("■■社製純正パーツ・Σ",560,category);
 			}else {
 				pl.getAllItemList().get(select).identified("ネルグネジ",100,category);
 			}
@@ -234,7 +237,7 @@ public abstract class GameSystem {
 		while(true) {
 			do {
 				System.out.println("\n何の情報を確かめますか？");
-				System.out.print("1.自分のステータス 2.現在位置確認 3.発掘アイテム一覧 4.アイテムの買取価格表 5.アイテムの説明 6.戻る >>");
+				System.out.print("1.自分のステータス 2.現在位置確認 3.発掘アイテム一覧 4.アイテムの説明 5.戻る >>");
 				select = scNum.nextInt();
 				if(0 >= select || select > 6) {
 					System.out.println("選択肢は1～4を入力してください。");
@@ -252,12 +255,9 @@ public abstract class GameSystem {
 				pl.haveItem();
 				break;
 			case 4:
-				
+				itemInfo(scNum,select);
 				break;
 			case 5:
-				
-				break;
-			case 6:
 				System.out.println("情報確認を終了します。");
 				return;
 			}
@@ -357,15 +357,27 @@ public abstract class GameSystem {
 		
 		if(select == 0) {
 			System.out.println("\n全ての鑑定済みアイテムを売却します。");
-			for(int i = 0;i < allItem;i++) {
+			List<Item> list = new ArrayList<Item>();
+			//鑑定済みアイテムを一時避難
+			for(int i = 0;i < allItem;i++){
 				item = pl.getAllItemList().get(i);
 				if(item.getIdentified() == true) {
-					score.saleItem();
-					saleItem = pl.getAllItemList().remove(i);
-					salePrice = saleItem.salePrice();
-					pl.income(salePrice);
+					list.add(item);
 				}
 			}
+			//所持リストから鑑定済みアイテムを削除
+			pl.getAllItemList().removeAll(list);
+			
+			//削除したアイテムの合計売却金額を計算
+			for(int i = 0;i < list.size();i++) {
+				score.saleItem(); //売却計測
+				salePrice += list.get(i).salePrice();
+			}
+			
+			//プレイヤーに売却金額を入金
+			pl.income(salePrice);
+			
+			GameSystem.elapsed(); //時間経過表現
 			System.out.println("全ての鑑定済みアイテムを売却しました。");
 			pl.haveItem();
 		}else {
@@ -421,7 +433,47 @@ public abstract class GameSystem {
 		return fieldNow;
 	}
 	
-	
+	//アイテムの説明
+	public static void itemInfo(Scanner scNum,int select) {
+		System.out.println("現在取り扱いのあるアイテムは以下の種類です。");
+		System.out.println("どの種類のアイテムを確認しますか？");
+
+		do {
+			System.out.print("1.機械の部品 2.装飾品 3.貴金属類 4.武器 5.骨 6.全種類の一覧 7.戻る >>");
+			select = scNum.nextInt();
+			if(0 >= select || select > 8) {
+				System.out.println("選択肢は1～7を入力してください。");
+			}
+		}while(0 >= select || select > 8);
+		
+		switch(select) {
+		case 1:
+			FileSystem.flavortxt("flavor_machine.txt");
+			break;
+		case 2:
+			FileSystem.flavortxt("flavor_accessory.txt");
+			break;
+		case 3:
+			FileSystem.flavortxt("flavor_metal.txt");
+			break;
+		case 4:
+			FileSystem.flavortxt("flavor_wepon.txt");
+			break;
+		case 5:
+			FileSystem.flavortxt("flavor_born.txt");
+			break;
+		case 6:
+			FileSystem.flavortxt("flavor_machine.txt");
+			FileSystem.flavortxt("flavor_accessory.txt");
+			FileSystem.flavortxt("flavor_metal.txt");
+			FileSystem.flavortxt("flavor_wepon.txt");
+			FileSystem.flavortxt("flavor_born.txt");
+			break;
+		case 7:
+			System.out.println("アイテムの説明を終了します。");
+			return;
+		}
+	}
 	
 	
 	

@@ -2,13 +2,16 @@ package junk.system;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.Scanner;
 
 import junk.field.Field;
 import junk.item.Item;
 import junk.life.Appraiser;
+import junk.life.Begger;
 import junk.life.Human;
 import junk.life.Player;
+import junk.life.Thief;
 
 public class JunkAPP {
 
@@ -21,6 +24,9 @@ public class JunkAPP {
 		
 		//プレイヤー
 		Player pl = null;
+		
+		//盗賊、物乞い
+		Human human = null;
 		
 		//フィールドの生成
 		Field[][] field = GameSystem.cleateField();
@@ -52,6 +58,7 @@ public class JunkAPP {
 		while(true) {
 			System.out.println("\n―労働" + (score.getCountDay() + 1) + "日目―");
 			
+			//活動限界を迎えた時の処理
 			if(Score.MAX_DAY == score.getCountDay()) {
 				System.out.println("\nあなたは活動限界を迎えました。受付にて退場処理を行ってください。");
 				do {
@@ -70,7 +77,8 @@ public class JunkAPP {
 					GameSystem.displayData(scNum,field,pl,select);
 					break;
 				case 3://データ保存
-					
+					System.out.println("※実装されていません※");
+					//FileSystem.save(pl);
 					break;
 				case 4://終了
 					System.out.println("お疲れ様でした。またの労働をお待ちしております。");
@@ -80,12 +88,25 @@ public class JunkAPP {
 				}
 			}else{
 				
-				Human enemy = null;
-				enemy = VsNpcSystem.newEnemy();
-				if(enemy != null) {
-					VsNpcSystem.encountEnemy(select,scNum,pl,score,enemy);
+				
+				//盗賊、物乞いが発生するかどうか
+				int r = new Random().nextInt(5) + 1;
+				switch(r) {
+				case 1: //盗賊
+					int bodyType = new Random().nextInt(3) + 1;
+					human = new Thief(bodyType);
+					VsNpcSystem.encountEnemy(select,scNum,pl,score,human);
+					break;
+				case 2: //物乞い
+					human = new Begger();
+					VsNpcSystem.encountEnemy(select,scNum,pl,score,human);
+					break;
+				default: //何もしない
+					System.out.println("\n誰とも遭遇しませんでした。"); //確認用
+					break;
 				}
 				
+				//プレイヤーの行動
 				System.out.println("\n「何をしようか？」");
 				do {
 					System.out.print("1.発掘する 2.先へ進む 3.鑑定と売却 4.情報確認 5.仕事を休む 6.退場（ゲーム終了） >>");
