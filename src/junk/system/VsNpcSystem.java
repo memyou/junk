@@ -1,5 +1,7 @@
 package junk.system;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 import java.util.Scanner;
 
@@ -15,17 +17,17 @@ public abstract class VsNpcSystem {
 	
 	//接敵
 	public static void encountEnemy(int select,Scanner scNum,Player pl,Score score,Human enemy) {
-		//中身のインスタンスを判定
-		Thief thief = null;
+		//インスタンス調査と登場時セリフ
 		if(enemy instanceof Thief) {
-			thief = (Thief)enemy;
+			Thief thief = (Thief)enemy;
+			thief.encountTxt();
 		}
-		Begger begger = null;
 		if(enemy instanceof Begger) {
-			begger = (Begger)enemy;
+			Begger begger = (Begger)enemy;
+			begger.encountTxt();
 		}
 		
-
+		
 		while(true) {
 			do {
 				System.out.printf("\n「%sに遭遇してしまった。どう切り抜けよう？」\n",enemy.getName());
@@ -62,7 +64,6 @@ public abstract class VsNpcSystem {
 		
 		//プレイヤーの戦闘突入セリフ
 		pl.battle(human);
-		GameSystem.elapsed(); //時間経過表現
 		
 	if(human instanceof Appraiser) {
 		//鑑定士を襲撃した時
@@ -71,6 +72,8 @@ public abstract class VsNpcSystem {
 		//鑑定士の勝利
 		pl.loser(human);
 	}else {
+		GameSystem.elapsed(); //時間経過表現
+		
 		//鑑定士以外の敵を攻撃した時
 		if(pl.getBodyType() > human.getBodyType()) {
 			score.winBattle(); //勝利計測
@@ -94,14 +97,13 @@ public abstract class VsNpcSystem {
 	//逃げる
 	//敵から逃げる、失敗した時はさらに確率で勝敗決定
 	public static void run(Player pl,Human human,Score score) {
-		
-		GameSystem.elapsed(); //時間経過表現
-		
 		if(human instanceof Begger) {
 			//物乞いなら確定で逃走可能
 			score.runaway(); //逃走計測
 			pl.run(human);
 		}else{
+			GameSystem.elapsed(); //時間経過表現
+			
 			if(pl.getBodyType() < human.getBodyType()) {
 				//逃げられる
 				score.runaway(); //逃走計測
@@ -146,11 +148,7 @@ public abstract class VsNpcSystem {
 	
 	//敵と対話する、確率で成功、失敗すると確率で勝敗決定
 	public static void persuade(Player pl,Human human,Score score) {
-		//インスタンス調査
-		Thief thief = null;
-		if(human instanceof Thief) {
-			thief = (Thief)human;
-		}
+		//インスタンス調査}
 		Begger begger = null;
 		if(human instanceof Begger) {
 			begger = (Begger)human;
@@ -181,10 +179,12 @@ public abstract class VsNpcSystem {
 				if(fight == 0) {
 					//勝ち
 					score.winBattle(); //勝利計測
+					System.out.println("戦闘に勝利しました。");
 					pl.winner(human);
 				}else {
 					//負け
 					score.loseBattle(); //敗北計測
+					System.out.println("戦闘に敗北しました。");
 					pl.loser(human);
 				}	
 			}
@@ -209,16 +209,15 @@ public abstract class VsNpcSystem {
 		}
 	}
 	
-	//盗賊にアイテムを奪われる処理、最大３個
+	//盗賊にアイテムを奪われる処理、インデックス０から最大３個
 	public static int rubItem(Player pl) {
 		//全所持アイテム数
 		int listSize = pl.getAllItemList().size();
-		//奪われるアイテム
-		int robItem = new Random().nextInt(listSize);
 		//奪われる個数、ランダムで最大３個
 		int rand = new Random().nextInt(Thief.MAX_RUB) + 1;
 		//実際に奪われた個数
 		int rub = 0;
+		List<Item> list = new ArrayList<Item>();
 		
 		if(listSize == 0) {
 			System.out.println("奪われるアイテムはありませんでした。");
@@ -229,12 +228,16 @@ public abstract class VsNpcSystem {
 			System.out.println("全てのアイテムが奪われてしまいました。");
 			return (rub = listSize);
 		}else {
-			//ランダムに最大３個奪われる
+			//前から最大３個奪われる
 			for(int i = 0;i < rand;i++) {
-				pl.getAllItemList().remove(robItem);
+				//奪われるものを取り出す
+				list.add(pl.getAllItemList().get(i));
 			}
+			//奪われたものを所持リストから削除
+			pl.getAllItemList().removeAll(list);
+			rub = rand;
 			System.out.printf("%d個のアイテムが奪われてしまいました。\n",rub);
-			return (rub = rand);
+			return rub;
 		}
 	}
 	
@@ -244,12 +247,13 @@ public abstract class VsNpcSystem {
 		int haveMoney = pl.getMoney();
 		int giveMoney = (int)(haveMoney * (rand / 10));
 		pl.setMoney((haveMoney - giveMoney));
-		System.out.printf("%dZを施しました。\n",giveMoney);
+		System.out.printf("%sは%dZを施しました。\n",pl.getName(),giveMoney);
 	}
 	
 	//物乞いからアイテムを譲られる処理、ランダムでＮ以上のアイテムを１つ取得
 	public static void take(Player pl,Begger begger) {
 		pl.getAllItemList().add(new Item(begger));
+		System.out.println("物乞いからアイテムを一つ受け取りました。");
 	}
 	
 	

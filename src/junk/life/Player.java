@@ -28,9 +28,10 @@ public class Player extends Worker{
 		this.money = money;
 	}
 	
+	//ステータス
 	@Override
 	public void showStatus() {
-		System.out.printf("名前：%S\n",super.getName());
+		System.out.printf("\n名前：%S\n",super.getName());
 		System.out.printf("現在の所持金：%dZ\n",this.getMoney());
 		//フレーバーテキスト
 		FileSystem.flavortxt("data/flavor_player.txt");
@@ -54,7 +55,7 @@ public class Player extends Worker{
 						System.out.println("「ここにはもう何もないようだ。」");
 					}else {
 						//アイテムがまだある時
-						score.allDigItem();
+						score.allDigItem(); //採掘計測
 						System.out.println("\n採掘を開始します。");
 						//時間経過表現
 						GameSystem.elapsed();
@@ -62,15 +63,24 @@ public class Player extends Worker{
 						this.allItemList.add(field[i][j].getItem());
 						field[i][j].setItem(null);
 						//ターン経過
-						score.countTurn();
-						System.out.println("アイテムを入手しました。本日の残り発掘回数：" + (Score.MAX_TURN - score.getCoutnTurn()));
-						if(score.getCoutnTurn() == Score.MAX_TURN) {
-							score.countDay();
+						score.countTurn(); //ターン計測
+						System.out.println("アイテムを入手しました。本日の残り発掘回数：" + (Score.MAX_TURN - score.getCountTurn()));
+						
+						if(score.getCountTurn() == Score.MAX_TURN) {
+							score.countDay(); //日数計測
 							System.out.println("本日の発掘を終了します。残り活動日数：" + (Score.MAX_DAY - score.getCountDay()));
-							if(score.getCountDay() == Score.MAX_DAY) {
+							if(score.getCountDay() == Score.MAX_DAY && Score.MAX_TURN == score.getCountTurn()) {
 								System.out.println("活動限界日数を迎えました。");
+								return;
+							}else {
+								//ターンをリセット
+								if(Score.MAX_TURN == score.getCountTurn()) {
+									score.setCountTurn();
+								}
 							}
 						}
+						
+						
 					}
 				}
 			}
@@ -81,9 +91,9 @@ public class Player extends Worker{
 	public void moveOn(Scanner scNum,Field[][] field) {
 		int select = 0;
 		while(true) {
-			System.out.println("\n「先へ進もう」");
+			System.out.println("\n「先へ進もう。」");
 			do {
-				System.out.println("「どっちの方向へ行こうか」");
+				System.out.println("「どっちの方向へ行こうか。」");
 				System.out.print("1.東 2.西 3.南 4.北 >>");
 				select = scNum.nextInt();
 				if(0 >= select || select > 5) {
@@ -128,7 +138,7 @@ public class Player extends Worker{
 		}else {
 			System.out.println("西に一つ区画を移動しました。");
 			int move = this.getWhereFieldNum();
-			this.setWhereFieldNum(move);
+			this.setWhereFieldNum(move - 1);
 			System.out.println("現在位置：" + this.getWhereFieldNum());
 		}
 	}
@@ -222,9 +232,9 @@ public class Player extends Worker{
 	
 	//仕事を終える
 	public void endWork(Scanner scNum,int select,Score score) {
-		System.out.println("\n「今回の仕事はもう終わろうかな。」");
-		
-		
+		System.out.println("\n「今回の仕事はもう終わりだ。」");
+		//処理呼び出し
+		GameSystem.endWork(scNum,select,score,this);
 	}
 	
 	//戦闘に入る
@@ -245,22 +255,22 @@ public class Player extends Worker{
 	public void observation(Human human) {
 		System.out.println("\n「相手を観察してみよう。」");
 		human.showStatus();
+		return;
 	}
 	
 	//敵と対話する
 	public void persuade(Human human) {
 		if(human instanceof Thief) {
 			Thief thief = (Thief)human;
-			System.out.println("「あんたも採掘に来たんだろ。他人にかかわっている暇があるのか？」");
+			System.out.println("\n「あんたも採掘に来たんだろ。他人にかかわっている暇があるのか？」");
 			thief.persuade(this);
 		}else if(human instanceof Begger) {
 			Begger begger = (Begger)human;
-			System.out.println("「わかったよ、でも余り沢山はやれないからな。」");
+			System.out.println("\n「わかったよ、でも余り沢山はやれないからな。」");
 			if(this.getMoney() == 0) {
-				System.out.println("「あ、すまない、今手持ちが全く……」");
+				System.out.println("「あ、すまない、今手持ちが全く……。」");
 				begger.persuade(this);
 			}else {
-				//物乞いの反応呼び出し
 				System.out.println("「出せるのはこれだけだ。」");
 				
 				GameSystem.elapsed(); //時間経過表現
@@ -269,7 +279,6 @@ public class Player extends Worker{
 				VsNpcSystem.give(this);
 				//物乞いの反応呼び出し
 				begger.persuade(this);
-				
 			}
 		}
 	}
@@ -302,11 +311,7 @@ public class Player extends Worker{
 			//盗賊に敵対した時
 			Thief thief = (Thief)human;
 			thief.winner(this);
-			if(this.getAllItemList().size() == 0) {
-			System.out.println("「せっかく採掘したアイテムが全部奪われてしまった……。」");
-			}else {
-				System.out.println("「酷い目にあった……でもアイテムを全部奪われなくて良かった。」");
-			}
+			System.out.println("「酷い目に遭った……。」");
 		}
 	}
 	
@@ -325,14 +330,14 @@ public class Player extends Worker{
 	public void run(Human human) {
 		if(human instanceof Thief) {
 			Thief thief = (Thief)human;
-			System.out.println("「ここは……逃げるが勝ち！」");
+			System.out.println("\n「ここは……逃げるが勝ち！」");
 			//盗賊の反応呼び出し
 			thief.run(this);
 			GameSystem.elapsed(); //時間経過表現
 			System.out.println("「よし、なんとか振り切ったぞ……。」");
 		}else if(human instanceof Begger) {
 			Begger begger = (Begger)human;
-			System.out.println("「悪いがあんたにかまっている暇はないんだ。」");
+			System.out.println("\n「悪いがあんたにかまっている暇はないんだ。」");
 			//物乞いの反応呼び出し
 			begger.run();
 			GameSystem.elapsed(); //時間経過表現

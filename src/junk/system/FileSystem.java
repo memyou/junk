@@ -39,7 +39,7 @@ public class FileSystem {
 	}
 	
 	//プレイヤーデータを書き込み
-	static void save(Player pl) {
+	public static void save(Player pl) {
 		Gson gson = new Gson();
 		String json = gson.toJson(pl);
 		File file = new File("playerDeta.json");
@@ -48,7 +48,6 @@ public class FileSystem {
 		}catch(IOException e) {
 			;
 		}
-		
 	}
 	
 	//プレイヤーデータを読み取り
@@ -90,7 +89,7 @@ public class FileSystem {
 		}
 		
 		for(String text : list) {
-			System.out.print(text);
+			System.out.println(text);
 		}
 		System.out.println("");
 	}

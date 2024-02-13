@@ -32,8 +32,9 @@ public class Appraiser extends Human{
 		
 		//鑑定処理呼び出し
 		GameSystem.appraisalItem(pl,scNum,select);
-		
-		System.out.println("『他に何かございますか？』");
+		GameSystem.elapsed(); //時間経過表現
+		System.out.println("『これはこれは……はい、鑑定終了でございます。』");
+		return;
 	}
 	
 	//買取
@@ -43,7 +44,7 @@ public class Appraiser extends Human{
 		//買取処理呼び出し
 		GameSystem.saleItem(pl,this,scNum, score);
 		
-		System.out.println("『他のご要望はおありで？』");
+		return;
 	}
 	
 	//戦闘、鑑定士の勝利確定

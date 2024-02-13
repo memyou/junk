@@ -17,6 +17,11 @@ public class Begger extends Human{
 		FileSystem.flavortxt("data/flavor_begger.txt");
 	}
 	
+	//登場時セリフ
+	public void encountTxt() {
+		System.out.println("\n『そこの労働者様……私にどうか、お恵み頂けませんでしょうか……。』");
+	}
+	
 	public void run() {
 		System.out.println("『ああ、どうかお慈悲を……お待ちくだされ……！』");
 	}
@@ -33,6 +38,8 @@ public class Begger extends Human{
 			System.out.println("『貴方の労働に幸あらんことを。それでは……。』");
 		}else {
 			System.out.println("『おお、なんと慈悲深い……ありがとうございます、労働者様……！』");
+			System.out.println("『こちらをどうぞお受け取りください。』");
+			
 			VsNpcSystem.take(pl,this);
 		}
 	}

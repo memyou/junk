@@ -41,9 +41,7 @@ public abstract class GameSystem {
 			}
 		}
 		return field;
-	}
-	
-	
+	}	
 	
 	//ゲームで利用する操作の説明
 	static void useKey() {
@@ -162,6 +160,7 @@ public abstract class GameSystem {
 					//アイテムの書き換え
 					settingItem(pl,i);
 				}
+				
 			}
 		}else{ //選択したものだけ鑑定した時
 			settingItem(pl,(select - 1));
@@ -182,7 +181,7 @@ public abstract class GameSystem {
 			}
 		}else if(category instanceof Accessory) {
 			if(rand == 0) {
-				pl.getAllItemList().get(select).identified("第■期■■■王朝■■■■妃記念ネックレス",1500,category);
+				pl.getAllItemList().get(select).identified("記念のネックレス",1500,category);
 			}else {
 				pl.getAllItemList().get(select).identified("ブティック・ともよのドレス",300,category);
 			}
@@ -302,7 +301,8 @@ public abstract class GameSystem {
 		if(allItem == 0) {
 			System.out.println("『さすがの我々も、現物がなければ鑑定できませんよ。』");
 		}else {
-				System.out.println("『どのアイテムを鑑定致しますか？』");
+				System.out.println("『どちらのアイテムを鑑定致しますか？』");
+				//所持アイテム表示
 				pl.haveItem();
 				do {
 					System.out.printf("\n0.全ての未鑑定アイテムを鑑定する 1～%d.未鑑定アイテムを個別に鑑定する >>",allItem);
@@ -311,21 +311,47 @@ public abstract class GameSystem {
 					if(0 > select || select > (allItem + 1)) {
 						System.out.printf("アイテムは1～%dから選択してください。\n",(allItem + 1));
 					}
-					if(select != 0) {
-						if(pl.getAllItemList().get(select - 1).getIdentified() == true) {
-							System.out.println("『おやおや、これは鑑定済みですねえ。』");
-						}
+
+					System.out.println("\n『それでは鑑定致しましょう。』");
+					if(select == 0) {
+						GameSystem.setItemStatus(pl,select);
+					}else {
+						GameSystem.setItemStatus(pl,select - 1);
 					}
+					
+					
 				}while(0 > allItem || select > (allItem + 1));
-				
 				System.out.println("\n『それでは鑑定致しましょう。』");
+				
 				if(select == 0) {
-					GameSystem.setItemStatus(pl,select);
-				}else {
-					GameSystem.setItemStatus(pl,select - 1);
+					int list = pl.getAllItemList().size();
+					Item item = null;
+					int count = 0;
+					
+					//中身が鑑定済みか判定
+					for(int i = 0;i < list;i++) {
+						item = pl.getAllItemList().get(i);
+						if(item.getIdentified() == true) {
+							count++;
+						}	
+					}
+					
+					if(count == list) {
+						//全部鑑定済みなら
+						System.out.println("『おやおや、これらは全て鑑定済みですよ。』");
+					}else {
+						//未鑑定が一つでもあれば
+						GameSystem.setItemStatus(pl,select);
+					}
+				}else if(select != 0) {
+					if(pl.getAllItemList().get(select - 1).getIdentified() == true) {
+						//選んだものが鑑定済みなら
+						System.out.println("『おやおや、これは鑑定済みですねえ。』");
+					}else {
+						//選んだものが未鑑定なら
+						GameSystem.setItemStatus(pl,select - 1);
+					}
 				}
-				GameSystem.elapsed(); //時間経過表現
-				System.out.println("『これはこれは……はい、鑑定終了でございます。』");
 				
 		}
 	}
@@ -396,7 +422,6 @@ public abstract class GameSystem {
 	
 	//仕事を一回休む
 	public static void restWork(Scanner scNum,int select,Score score) {
-		System.out.println("\n「発掘作業を1回休もうか？」");
 		do {
 			System.out.print("休みを取ると発掘回数を1消費します。休みますか？ 1.はい 2.いいえ >>");
 			select = scNum.nextInt();
@@ -407,8 +432,8 @@ public abstract class GameSystem {
 		switch(select) {
 		case 1:
 			score.countTurn();
-			System.out.println("\n発掘作業をしませんでした。1日の残り採掘回数：" + (Score.MAX_TURN - score.getCoutnTurn()));
-			if(score.getCountDay() == Score.MAX_DAY && score.getCoutnTurn() == Score.MAX_TURN) {
+			System.out.println("\n発掘作業をしませんでした。1日の残り採掘回数：" + (Score.MAX_TURN - score.getCountTurn()));
+			if(score.getCountDay() == Score.MAX_DAY && score.getCountTurn() == Score.MAX_TURN) {
 				System.out.println("\n「今回の仕事はここまでだ。換金して帰ろう。」");
 			}
 			break;
@@ -477,9 +502,10 @@ public abstract class GameSystem {
 	
 	//ゲームを終了する
 	public static void endWork(Scanner scNum,int select,Score score,Player pl) {
+		int day = Score.MAX_DAY - score.getCountDay();
 		do {
 			//あとどれくらい作業できるかの表示
-			
+			System.out.printf("あと%d日活動することが出来ます。",day);
 			System.out.print("労働をやめ、区画から退場しますか？ 1.はい 2.いいえ >>");
 			select = scNum.nextInt();
 			if(0 >= select || select > 3) {
@@ -487,10 +513,10 @@ public abstract class GameSystem {
 			}
 		}while(0 >= select || select > 3);
 		
-		if(select == 0) {
+		if(select == 1) {
 			//セーブをして終了
-			System.out.println("");
 			FileSystem.save(pl);
+			System.out.printf("\n労働者%s、お疲れさまでした。またの労働をお待ちしております。\n",pl.getName());
 		}else {
 			System.out.println("\n労働を再開します。");
 			return;

@@ -7,35 +7,22 @@ import junk.system.VsNpcSystem;
 public class Thief extends Worker{
 	public static final int MAX_RUB = 3;
 	
+	//コンストラクタ
 	public Thief(int bodyType) {
 		super("盗賊",bodyType);
 	}
 	
+	//ステータス表示
 	@Override
 	public void showStatus() {
-		System.out.printf("名前：%S\n",super.getName());
-		//体格への言及
-		switch(super.getBodyType()) {
-		case 0:
-			//やせ型の盗賊
-			System.out.println("細身の盗賊。");
-			break;
-		case 1:
-			//普通体系の盗賊
-			System.out.println("標準体型の盗賊。");
-			break;
-		case 2:
-			//体格のいい盗賊
-			System.out.println("体の大きな盗賊。");
-			break;
-		}
+		System.out.printf("名前：%S\n",super.getBodyType() == 0 ? "細身の盗賊" : super.getBodyType() == 1 ? "標準体型の盗賊" : "恰幅のいい盗賊");
 		//フレーバーテキスト呼び出し
 		FileSystem.flavortxt("data/flavor_thief.txt");
 	}
 	
 	//登場セリフ
 	public void encountTxt() {
-		System.out.println("『おいてめえ！　出すもん出せやぁ！』");
+		System.out.println("\n『おいてめえ！　出すもん出せやぁ！』");
 	}
 	
 	//盗賊が勝利した時
@@ -44,9 +31,11 @@ public class Thief extends Worker{
 		if(human instanceof Player) {
 			Player pl = (Player)human;
 			System.out.println("『ハハハ、俺の勝ちだァ！　てめえのアイテムを頂いていくぜ！』");
+			
+			GameSystem.elapsed(); //時間経過表現
+			
 			//強奪処理
 			int rub = VsNpcSystem.rubItem(pl);
-			GameSystem.elapsed(); //時間経過表現
 			rubItem(rub);
 		}
 	}
@@ -73,6 +62,7 @@ public class Thief extends Worker{
 		System.out.println("『チッ、今回は仕方ねえ。ずらかるか……。』");
 	}
 	
+	//プレイヤーが逃走した時の反応
 	@Override
 	public void run(Human human) {
 		System.out.println("『あっ、てめえ！　待ちやがれ――！』");
@@ -85,7 +75,4 @@ public class Thief extends Worker{
 		
 	}
 
-	
-	
-	
 }

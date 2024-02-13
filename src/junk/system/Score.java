@@ -5,7 +5,7 @@ import junk.life.Player;
 public class Score {
 	//日数
 	private int countDay;
-	public static final int MAX_DAY = 5;
+	public static final int MAX_DAY = 3;
 	
 	//ターン数
 	private int countTurn;
@@ -72,10 +72,11 @@ public class Score {
 	}
 	
 	
-	//getter
+	//getter,setter
 	public int getCountDay() { return this.countDay; }
 	
-	public int getCoutnTurn() { return this.countTurn; }
+	public int getCountTurn() { return this.countTurn; }
+	public void setCountTurn() { this.countTurn = 0;}
 	
 	public int getCountCallAp() { return this.countCallAp; }
 	public int getCountAppraisal() { return this.countAppraisal; }
