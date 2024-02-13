@@ -102,7 +102,7 @@ public class JunkAPP {
 					VsNpcSystem.encountEnemy(select,scNum,pl,score,human);
 					break;
 				default: //何もしない
-					System.out.println("\n誰とも遭遇しませんでした。"); //確認用
+					System.out.println("\n誰とも遭遇しませんでした。"); //※動作確認用
 					break;
 				}
 				
