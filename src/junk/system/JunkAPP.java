@@ -43,11 +43,11 @@ public class JunkAPP {
 		
 		
 		//ゲームのルール説明
-//		GameSystem.useKey();
-//		System.out.println("");
+		GameSystem.useKey();
+		System.out.println("");
 		
 		//ゲームの導入部分
-//		FileSystem.explanation();
+		FileSystem.explanation();
 		
 		//ゲーム開始
 		pl = GameSystem.cleatePlayer(scName,scNum,pl,itemList);
