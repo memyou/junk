@@ -231,10 +231,12 @@ public class Player extends Worker{
 	}
 	
 	//仕事を終える
-	public void endWork(Scanner scNum,int select,Score score) {
+	public boolean endWork(Scanner scNum,int select,Score score) {
 		System.out.println("\n「今回の仕事はもう終わりだ。」");
+		boolean isEnd = false;
 		//処理呼び出し
-		GameSystem.endWork(scNum,select,score,this);
+		isEnd = GameSystem.endWork(scNum,select,score,this);
+		return isEnd;
 	}
 	
 	//戦闘に入る

@@ -57,7 +57,7 @@ public class JunkAPP {
 		System.out.println("\n***廃棄区画入口***");
 		while(true) {
 			
-			System.out.printf("\n―労働%s―\n",score.getCountDay() == 0 ? "初日" : (score.getCountDay() + "日目"));
+			System.out.printf("\n―労働%s―\n",score.getCountDay() == 0 ? "初日" : ((score.getCountDay() + 1) + "日目"));
 			
 			//活動限界を迎えた時の処理
 			if(Score.MAX_DAY == score.getCountDay() && Score.MAX_TURN == score.getCountTurn()) {
@@ -146,7 +146,11 @@ public class JunkAPP {
 					break;
 				case 6:
 					//退場処理
-					pl.endWork(scNum,select,score);
+					boolean isEnd = pl.endWork(scNum,select,score);
+					if(isEnd) {
+						//終わるを選択するとゲーム終了
+						return;
+					}
 					break;
 				}
 			}	

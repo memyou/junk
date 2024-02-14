@@ -331,12 +331,12 @@ public abstract class GameSystem {
 					//中身が鑑定済みか判定
 					for(int i = 0;i < list;i++) {
 						item = pl.getAllItemList().get(i);
-						if(item.getIdentified() == true) {
+						if(item.getIdentified() == false) {
 							count++;
 						}	
 					}
 					
-					if(count == list) {
+					if(count != list) {
 						//全部鑑定済みなら
 						System.out.println("『おやおや、これらは全て鑑定済みですよ。』");
 					}else {
@@ -501,7 +501,7 @@ public abstract class GameSystem {
 	}
 	
 	//ゲームを終了する
-	public static void endWork(Scanner scNum,int select,Score score,Player pl) {
+	public static boolean endWork(Scanner scNum,int select,Score score,Player pl) {
 		int day = Score.MAX_DAY - score.getCountDay();
 		do {
 			//あとどれくらい作業できるかの表示
@@ -517,9 +517,10 @@ public abstract class GameSystem {
 			//セーブをして終了
 			FileSystem.save(pl);
 			System.out.printf("\n労働者%s、お疲れさまでした。またの労働をお待ちしております。\n",pl.getName());
+			return true;
 		}else {
 			System.out.println("\n労働を再開します。");
-			return;
+			return false;
 		}
 		
 	}
