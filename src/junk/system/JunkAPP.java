@@ -62,6 +62,7 @@ public class JunkAPP {
 			//活動限界を迎えた時の処理
 			if(Score.MAX_DAY == score.getCountDay() && Score.MAX_TURN == score.getCountTurn()) {
 				System.out.println("\nあなたは活動限界を迎えました。鑑定と売却を済ませ、受付にて退場処理を行ってください。");
+				System.out.println("所持アイテムは次回に持ち越せず、売却していない分は失われます。");
 				do {
 					System.out.print("1.鑑定と売却 2.情報確認 3.労働者情報を保存 4.退場（ゲーム終了） >>");
 					select = scNum.nextInt();

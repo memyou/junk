@@ -32,8 +32,6 @@ public class Appraiser extends Human{
 		
 		//鑑定処理呼び出し
 		GameSystem.appraisalItem(pl,scNum,select);
-		GameSystem.elapsed(); //時間経過表現
-		System.out.println("『これはこれは……はい、鑑定終了でございます。』");
 		return;
 	}
 	

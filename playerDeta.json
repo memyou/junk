@@ -1,1 +1,1 @@
-{"whereFieldNum":21,"money":0,"allItemList":[{"price":0,"rarity":{"rarity":"Worthless","rarityStatus":"無価値な"},"identified":false}],"name":"aka","bodyType":3}
+{"whereFieldNum":16,"money":0,"allItemList":[{"name":"■■■国金貨","price":8000,"rarity":{"rarity":"Nomal","rarityStatus":"汚れた"},"category":{"categoryName":"貴金属"},"identified":true},{"name":"オルタ鉄塊","price":7600,"rarity":{"rarity":"Common","rarityStatus":"壊れた"},"category":{"categoryName":"貴金属"},"identified":true}],"name":"aka","bodyType":3}

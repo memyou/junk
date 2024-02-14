@@ -311,15 +311,6 @@ public abstract class GameSystem {
 					if(0 > select || select > (allItem + 1)) {
 						System.out.printf("アイテムは1～%dから選択してください。\n",(allItem + 1));
 					}
-
-					System.out.println("\n『それでは鑑定致しましょう。』");
-					if(select == 0) {
-						GameSystem.setItemStatus(pl,select);
-					}else {
-						GameSystem.setItemStatus(pl,select - 1);
-					}
-					
-					
 				}while(0 > allItem || select > (allItem + 1));
 				System.out.println("\n『それでは鑑定致しましょう。』");
 				
@@ -331,17 +322,19 @@ public abstract class GameSystem {
 					//中身が鑑定済みか判定
 					for(int i = 0;i < list;i++) {
 						item = pl.getAllItemList().get(i);
-						if(item.getIdentified() == false) {
+						if(item.getIdentified() == true) {
 							count++;
 						}	
 					}
 					
-					if(count != list) {
+					if(count == list) {
 						//全部鑑定済みなら
 						System.out.println("『おやおや、これらは全て鑑定済みですよ。』");
 					}else {
 						//未鑑定が一つでもあれば
 						GameSystem.setItemStatus(pl,select);
+						GameSystem.elapsed(); //時間経過表現
+						System.out.println("『これはこれは……はい、鑑定終了でございます。』");
 					}
 				}else if(select != 0) {
 					if(pl.getAllItemList().get(select - 1).getIdentified() == true) {
@@ -350,6 +343,8 @@ public abstract class GameSystem {
 					}else {
 						//選んだものが未鑑定なら
 						GameSystem.setItemStatus(pl,select - 1);
+						GameSystem.elapsed(); //時間経過表現
+						System.out.println("『これはこれは……はい、鑑定終了でございます。』");
 					}
 				}
 				
@@ -370,7 +365,7 @@ public abstract class GameSystem {
 			System.out.printf("\n0.全ての鑑定済みアイテムを売却する 1～%d.鑑定済みアイテムを個別に売却する",allItem);
 			select = scNum.nextInt();
 			if(0 > select || select > (allItem + 1)) {
-				System.out.printf("選択肢は0～%dを入力してください。");
+				System.out.printf("選択肢は0～%dを入力してください。",allItem);
 			}
 			if(select > 1) {
 				item = pl.getAllItemList().get((select - 1));
